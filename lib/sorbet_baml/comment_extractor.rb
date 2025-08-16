@@ -8,15 +8,20 @@ module SorbetBaml
 
     sig { params(klass: T.class_of(T::Struct)).returns(T::Hash[String, T.nilable(String)]) }
     def self.extract_field_comments(klass)
+      # First try to get descriptions from the description extractor (extra field)
+      descriptions = DescriptionExtractor.extract_prop_descriptions(klass)
+      
+      # Then fall back to comment-based extraction for any missing descriptions
       comments = {}
       source_file = find_source_file(klass)
       
-      return comments unless source_file && File.exist?(source_file)
+      if source_file && File.exist?(source_file)
+        lines = File.readlines(source_file)
+        extract_comments_from_lines(lines, T.must(T.must(klass.name).split('::').last), comments)
+      end
       
-      lines = File.readlines(source_file)
-      extract_comments_from_lines(lines, T.must(T.must(klass.name).split('::').last), comments)
-      
-      comments
+      # Merge with priority: description parameters > comments
+      descriptions.merge(comments) { |key, desc_param, comment| desc_param }
     end
 
     sig { params(klass: T.class_of(T::Enum)).returns(T::Hash[String, T.nilable(String)]) }
