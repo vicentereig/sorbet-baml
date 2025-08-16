@@ -6,6 +6,7 @@ require_relative "sorbet_baml/version"
 require_relative "sorbet_baml/converter"
 require_relative "sorbet_baml/type_mapper"
 require_relative "sorbet_baml/struct_extensions"
+require_relative "sorbet_baml/enum_extensions"
 
 module SorbetBaml
   class Error < StandardError; end
@@ -25,5 +26,6 @@ module SorbetBaml
   end
 end
 
-# Extend T::Struct with BAML conversion methods
+# Extend T::Struct and T::Enum with BAML conversion methods
 T::Struct.extend(SorbetBaml::StructExtensions)
+T::Enum.extend(SorbetBaml::EnumExtensions)

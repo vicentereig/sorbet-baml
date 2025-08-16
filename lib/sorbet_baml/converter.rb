@@ -19,6 +19,11 @@ module SorbetBaml
       klasses.map { |klass| converter.convert_struct(klass) }.join("\n\n")
     end
 
+    sig { params(klass: T.class_of(T::Enum), options: T::Hash[Symbol, T.untyped]).returns(String) }
+    def self.from_enum(klass, options = {})
+      new(options).convert_enum(klass)
+    end
+
     sig { params(options: T::Hash[Symbol, T.untyped]).void }
     def initialize(options = {})
       @options = options
@@ -37,6 +42,23 @@ module SorbetBaml
       props.each do |name, prop_info|
         baml_type = TypeMapper.map_type(prop_info[:type_object])
         lines << "#{' ' * @indent_size}#{name} #{baml_type}"
+      end
+      
+      lines << "}"
+      lines.join("\n")
+    end
+
+    sig { params(klass: T.class_of(T::Enum)).returns(String) }
+    def convert_enum(klass)
+      class_name = klass.name || klass.to_s
+      simple_name = class_name.split('::').last
+      lines = ["enum #{simple_name} {"]
+      
+      # Get all enum values by calling values method
+      enum_values = klass.values
+      enum_values.each do |enum_instance|
+        value = enum_instance.serialize
+        lines << "#{' ' * @indent_size}\"#{value}\""
       end
       
       lines << "}"
