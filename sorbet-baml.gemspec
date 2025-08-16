@@ -33,13 +33,4 @@ Gem::Specification.new do |spec|
 
   # Runtime dependencies
   spec.add_dependency "sorbet-runtime", "~> 0.5"
-
-  # Development dependencies
-  spec.add_development_dependency "rake", "~> 13.0"
-  spec.add_development_dependency "rspec", "~> 3.13"
-  spec.add_development_dependency "sorbet", "~> 0.5"
-  spec.add_development_dependency "tapioca", "~> 0.16"
-  spec.add_development_dependency "rubocop", "~> 1.66"
-  spec.add_development_dependency "rubocop-sorbet", "~> 0.8"
-  spec.add_development_dependency "byebug", "~> 11.1"
 end

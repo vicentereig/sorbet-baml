@@ -126,7 +126,7 @@ DEPENDENCIES
   byebug (~> 11.1)
   irb
   rake (~> 13.0)
-  rspec (~> 3.0)
+  rspec (~> 3.13)
   rubocop (~> 1.66)
   rubocop-sorbet (~> 0.8)
   sorbet (~> 0.5)
