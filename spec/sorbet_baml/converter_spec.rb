@@ -48,8 +48,24 @@ RSpec.describe SorbetBaml::Converter do
     end
     
     context "with nested structs" do
-      it "references nested struct types" do
+      it "includes dependencies by default (smart defaults)" do
         result = described_class.from_struct(SorbetBaml::TestFixtures::UserWithAddress)
+        
+        expect(result).to eq(<<~BAML.strip)
+          class Address {
+            street string
+            city string
+          }
+
+          class UserWithAddress {
+            name string
+            address Address
+          }
+        BAML
+      end
+      
+      it "can disable dependencies when explicitly requested" do
+        result = described_class.from_struct(SorbetBaml::TestFixtures::UserWithAddress, include_dependencies: false)
         
         expect(result).to eq(<<~BAML.strip)
           class UserWithAddress {

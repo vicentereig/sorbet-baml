@@ -26,12 +26,22 @@ RSpec.describe "Dependency Management" do
       expect(result).not_to include("class ContactInfo {")
     end
 
-    it "defaults to not including dependencies" do
+    it "defaults to including dependencies (smart defaults)" do
       result = SorbetBaml::TestFixtures::Product.to_baml
+      
+      expect(result).to include("class Product {")
+      expect(result).to include("class Category {")
+      expect(result).to include("class Vendor {")
+      expect(result).to include("class ContactInfo {")
+    end
+    
+    it "can disable dependencies when explicitly set to false" do
+      result = SorbetBaml::TestFixtures::Product.to_baml(include_dependencies: false)
       
       expect(result).to include("class Product {")
       expect(result).not_to include("class Category {")
       expect(result).not_to include("class Vendor {")
+      expect(result).not_to include("class ContactInfo {")
     end
 
     it "orders dependencies before the main type" do

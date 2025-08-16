@@ -79,13 +79,12 @@ class User < T::Struct
   const :metadata, T::Hash[String, T.any(String, Integer)]
 end
 
-# Convert individual types
+# Convert with smart defaults (dependencies + descriptions included!)
 User.to_baml
 Status.to_baml
 Address.to_baml
 
-# 🚀 Include all dependencies automatically
-User.to_baml(include_dependencies: true)
+# 🚀 Smart defaults include dependencies and descriptions automatically
 # =>
 # enum Status {
 #   "active"
@@ -106,16 +105,62 @@ User.to_baml(include_dependencies: true)
 #   metadata map<string, string | int>
 # }
 
-# Customize formatting
-User.to_baml(
-  include_dependencies: true,
-  indent_size: 4
-)
+# 🎯 Disable features if needed  
+User.to_baml(include_descriptions: false)
+User.to_baml(include_dependencies: false)
 
-# Legacy API still supported
+# 🚀 Customize formatting (smart defaults still apply)
+User.to_baml(indent_size: 4)
+
+# Legacy API (no smart defaults, for backwards compatibility)
 SorbetBaml.from_struct(User)
 SorbetBaml.from_structs([User, Address])
 ```
+
+## 🎯 Field Descriptions
+
+Add context to your BAML types by documenting fields with comments:
+
+```ruby
+class User < T::Struct
+  # User's full legal name for display
+  const :name, String
+  
+  # Age in years, must be 18+
+  const :age, Integer
+  
+  # Primary email for notifications  
+  const :email, T.nilable(String)
+end
+
+class Status < T::Enum
+  enums do
+    # Account is active and verified
+    Active = new('active')
+    
+    # Account suspended for policy violation
+    Suspended = new('suspended')
+  end
+end
+
+# Generate BAML (descriptions included by default!)
+User.to_baml
+# =>
+# class User {
+#   name string @description("User's full legal name for display")
+#   age int @description("Age in years, must be 18+")
+#   email string? @description("Primary email for notifications")
+# }
+
+Status.to_baml
+# =>
+# enum Status {
+#   "active" @description("Account is active and verified")
+#   "suspended" @description("Account suspended for policy violation")
+# }
+```
+
+**Why descriptions matter**: LLMs use field descriptions to understand context and generate more accurate, meaningful data. This is crucial for complex domains where field names alone aren't sufficient.
 
 ## 🎯 Complete Type Support
 
@@ -146,7 +191,9 @@ SorbetBaml.from_structs([User, Address])
 ### 🚀 Advanced Features
 
 - **Ruby-idiomatic API**: Every T::Struct and T::Enum gets `.to_baml` method
-- **Dependency management**: `include_dependencies: true` automatically includes all referenced types
+- **Smart defaults**: Field descriptions and dependencies included automatically
+- **Field descriptions**: Extracts comments from source code for LLM context
+- **Dependency management**: Automatically includes all referenced types
 - **Proper ordering**: Dependencies are sorted topologically (no forward references needed)
 - **Circular reference handling**: Won't get stuck in infinite loops
 - **Customizable formatting**: Control indentation and other output options

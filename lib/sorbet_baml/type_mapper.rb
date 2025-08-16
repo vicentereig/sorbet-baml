@@ -48,8 +48,8 @@ module SorbetBaml
       when "Date", "DateTime", "Time"
         "string"
       else
-        # Check if it's a T::Struct
-        if raw_type < T::Struct
+        # Check if it's a T::Struct or T::Enum
+        if raw_type < T::Struct || raw_type < T::Enum
           type_name = raw_type.name || raw_type.to_s
           type_name.split('::').last || "unknown"
         else
