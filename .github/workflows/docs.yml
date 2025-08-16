@@ -46,6 +46,11 @@ jobs:
         id: pages
         uses: actions/configure-pages@v4
 
+      - name: Build frontend assets
+        working-directory: docs-site
+        run: |
+          npx esbuild frontend/javascript/index.js --bundle --outdir=output/_bridgetown/static --entry-names='index.[hash]'
+
       - name: Build site
         working-directory: docs-site
         env:
