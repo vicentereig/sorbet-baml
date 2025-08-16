@@ -34,7 +34,7 @@ RSpec.describe SorbetBaml::CommentExtractor do
       end
       stub_const("DocumentedUser", mock_class)
       
-      comments = described_class.extract_field_comments(DocumentedUser)
+      comments = described_class.extract_field_comments(mock_class)
       
       expect(comments).to eq({
         "name" => "User's full name for display",
@@ -64,7 +64,7 @@ RSpec.describe SorbetBaml::CommentExtractor do
       end
       stub_const("MultilineUser", mock_class)
       
-      comments = described_class.extract_field_comments(MultilineUser)
+      comments = described_class.extract_field_comments(mock_class)
       
       expect(comments["description"]).to eq("This is a very long comment that spans multiple lines and describes the field in detail")
       

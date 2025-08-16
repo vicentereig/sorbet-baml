@@ -92,7 +92,7 @@ module SorbetBaml
         value = enum_instance.serialize
         
         # Find the constant name for this value
-        constant_name = nil
+        constant_name = T.let(nil, T.nilable(String))
         klass.constants.each do |const_name|
           const_value = klass.const_get(const_name)
           if const_value.is_a?(klass) && const_value.serialize == value
@@ -105,7 +105,7 @@ module SorbetBaml
         
         # Add description if available (BAML uses @description annotations, not comments)
         if @include_descriptions && constant_name && comments[constant_name]
-          line += " @description(\"#{comments[constant_name].gsub('"', '\\"')}\")"
+          line += " @description(\"#{T.must(comments[constant_name]).gsub('"', '\\"')}\")"
         end
         
         lines << line
@@ -134,7 +134,7 @@ module SorbetBaml
         
         # Add description if available (BAML uses @description annotations)
         if @include_descriptions && comments[name.to_s]
-          escaped_comment = comments[name.to_s].gsub('"', '\\"')
+          escaped_comment = T.must(comments[name.to_s]).gsub('"', '\\"')
           line += " @description(\"#{escaped_comment}\")"
         end
         

@@ -14,7 +14,7 @@ module SorbetBaml
       return comments unless source_file && File.exist?(source_file)
       
       lines = File.readlines(source_file)
-      extract_comments_from_lines(lines, klass.name.split('::').last, comments)
+      extract_comments_from_lines(lines, T.must(T.must(klass.name).split('::').last), comments)
       
       comments
     end
@@ -27,14 +27,14 @@ module SorbetBaml
       return comments unless source_file && File.exist?(source_file)
       
       lines = File.readlines(source_file)
-      extract_enum_comments_from_lines(lines, klass.name.split('::').last, comments)
+      extract_enum_comments_from_lines(lines, T.must(T.must(klass.name).split('::').last), comments)
       
       comments
     end
 
     private
 
-    sig { params(klass: Class).returns(T.nilable(String)) }
+    sig { params(klass: T::Class[T.anything]).returns(T.nilable(String)) }
     def self.find_source_file(klass)
       # Try to find where the class was defined
       # This is a heuristic approach since Ruby doesn't provide reliable source location for classes
@@ -57,8 +57,8 @@ module SorbetBaml
         # Read the file and check if it contains the class definition
         begin
           content = File.read(file_path)
-          class_name = klass.name.split('::').last
-          if content.match(/class\s+#{Regexp.escape(class_name)}\s*</)
+          class_name = T.must(klass.name).split('::').last
+          if content.match(/class\s+#{Regexp.escape(T.must(class_name))}\s*</)
             return file_path
           end
         rescue
@@ -71,7 +71,7 @@ module SorbetBaml
 
     sig { params(lines: T::Array[String], class_name: String, comments: T::Hash[String, T.nilable(String)]).void }
     def self.extract_comments_from_lines(lines, class_name, comments)
-      in_target_class = false
+      in_target_class = T.let(false, T::Boolean)
       current_comment = T.let(nil, T.nilable(String))
       brace_depth = 0
       
@@ -98,10 +98,10 @@ module SorbetBaml
         
         # Extract comment
         if stripped.start_with?('#')
-          comment_text = stripped[1..-1].strip
+          comment_text = T.must(stripped[1..-1]).strip
           current_comment = current_comment ? "#{current_comment} #{comment_text}" : comment_text
         elsif stripped.match(/^const\s+:(\w+)/) && current_comment
-          field_name = stripped.match(/^const\s+:(\w+)/)[1]
+          field_name = T.must(stripped.match(/^const\s+:(\w+)/))[1]
           comments[field_name] = current_comment
           current_comment = nil
         elsif !stripped.empty? && !stripped.start_with?('#')
@@ -113,8 +113,8 @@ module SorbetBaml
 
     sig { params(lines: T::Array[String], class_name: String, comments: T::Hash[String, T.nilable(String)]).void }
     def self.extract_enum_comments_from_lines(lines, class_name, comments)
-      in_target_class = false
-      in_enums_block = false
+      in_target_class = T.let(false, T::Boolean)
+      in_enums_block = T.let(false, T::Boolean)
       current_comment = T.let(nil, T.nilable(String))
       
       lines.each do |line|

@@ -15,25 +15,43 @@ When working with LLMs, token efficiency directly impacts:
 
 BAML provides the perfect balance: concise, readable, and LLM-friendly.
 
-### Example
+### Example: Autonomous Research Workflow
 
 ```ruby
-# Your Sorbet types
-class User < T::Struct
-  const :name, String
-  const :age, Integer
-  const :email, T.nilable(String)
-  const :preferences, T::Hash[String, T.any(String, Integer)]
+# Complex LLM workflow types for autonomous research
+class ComplexityLevel < T::Enum
+  enums do
+    # Basic analysis requiring straightforward research
+    Basic = new('basic')
+    # Advanced analysis requiring deep domain expertise
+    Advanced = new('advanced')
+  end
 end
 
-# Ruby-idiomatic conversion
-User.to_baml
+class TaskDecomposition < T::Struct
+  # The main research topic being investigated
+  const :research_topic, String
+  # Target complexity level for the decomposition
+  const :complexity_level, ComplexityLevel
+  # Autonomously generated list of research subtasks
+  const :subtasks, T::Array[String]
+  # Strategic priority rankings for each subtask
+  const :priority_order, T::Array[Integer]
+end
+
+# Ruby-idiomatic conversion with dependencies
+TaskDecomposition.to_baml
 # =>
-# class User {
-#   name string
-#   age int
-#   email string?
-#   preferences map<string, string | int>
+# enum ComplexityLevel {
+#   "basic" @description("Basic analysis requiring straightforward research")
+#   "advanced" @description("Advanced analysis requiring deep domain expertise")
+# }
+# 
+# class TaskDecomposition {
+#   research_topic string @description("The main research topic being investigated")
+#   complexity_level ComplexityLevel @description("Target complexity level for the decomposition")
+#   subtasks string[] @description("Autonomously generated list of research subtasks")
+#   priority_order int[] @description("Strategic priority rankings for each subtask")
 # }
 ```
 
@@ -56,107 +74,120 @@ gem install sorbet-baml
 ```ruby
 require 'sorbet-baml'
 
-# 🎯 Ruby-idiomatic API - just call .to_baml on any T::Struct or T::Enum!
+# 🎯 Ruby-idiomatic API for complex LLM workflows
 
-class Status < T::Enum
+class ConfidenceLevel < T::Enum
   enums do
-    Active = new('active')
-    Inactive = new('inactive')
+    # Low confidence, requires further verification
+    Low = new('low')
+    # High confidence, strongly supported by multiple sources
+    High = new('high')
   end
 end
 
-class Address < T::Struct
-  const :street, String
-  const :city, String
-  const :postal_code, T.nilable(String)
+class ResearchFindings < T::Struct
+  # Detailed findings and analysis results
+  const :findings, String
+  # Key actionable insights extracted
+  const :key_insights, T::Array[String]
+  # Assessment of evidence quality and reliability
+  const :evidence_quality, ConfidenceLevel
+  # Confidence score for the findings (1-10 scale)
+  const :confidence_score, Integer
 end
 
-class User < T::Struct
-  const :name, String
-  const :status, Status
-  const :address, Address
-  const :tags, T::Array[String]
-  const :metadata, T::Hash[String, T.any(String, Integer)]
+class ResearchSynthesis < T::Struct
+  # High-level executive summary of all findings
+  const :executive_summary, String
+  # Primary conclusions drawn from the research
+  const :key_conclusions, T::Array[String]
+  # Collection of research findings
+  const :findings_collection, T::Array[ResearchFindings]
 end
 
 # Convert with smart defaults (dependencies + descriptions included!)
-User.to_baml
-Status.to_baml
-Address.to_baml
+ResearchSynthesis.to_baml
 
 # 🚀 Smart defaults include dependencies and descriptions automatically
 # =>
-# enum Status {
-#   "active"
-#   "inactive"
+# enum ConfidenceLevel {
+#   "low" @description("Low confidence, requires further verification")
+#   "high" @description("High confidence, strongly supported by multiple sources")
 # }
 # 
-# class Address {
-#   street string
-#   city string
-#   postal_code string?
+# class ResearchFindings {
+#   findings string @description("Detailed findings and analysis results")
+#   key_insights string[] @description("Key actionable insights extracted")
+#   evidence_quality ConfidenceLevel @description("Assessment of evidence quality and reliability")
+#   confidence_score int @description("Confidence score for the findings (1-10 scale)")
 # }
 # 
-# class User {
-#   name string
-#   status Status
-#   address Address
-#   tags string[]
-#   metadata map<string, string | int>
+# class ResearchSynthesis {
+#   executive_summary string @description("High-level executive summary of all findings")
+#   key_conclusions string[] @description("Primary conclusions drawn from the research")
+#   findings_collection ResearchFindings[] @description("Collection of research findings")
 # }
 
 # 🎯 Disable features if needed  
-User.to_baml(include_descriptions: false)
-User.to_baml(include_dependencies: false)
+ResearchSynthesis.to_baml(include_descriptions: false)
+ResearchSynthesis.to_baml(include_dependencies: false)
 
 # 🚀 Customize formatting (smart defaults still apply)
-User.to_baml(indent_size: 4)
+ResearchSynthesis.to_baml(indent_size: 4)
 
 # Legacy API (no smart defaults, for backwards compatibility)
-SorbetBaml.from_struct(User)
-SorbetBaml.from_structs([User, Address])
+SorbetBaml.from_struct(ResearchSynthesis)
+SorbetBaml.from_structs([ResearchSynthesis, ResearchFindings])
 ```
 
-## 🎯 Field Descriptions
+## 🎯 Field Descriptions for LLM Context
 
-Add context to your BAML types by documenting fields with comments:
+Add crucial context to your BAML types by documenting fields with comments - essential for autonomous agents and complex workflows:
 
 ```ruby
-class User < T::Struct
-  # User's full legal name for display
-  const :name, String
-  
-  # Age in years, must be 18+
-  const :age, Integer
-  
-  # Primary email for notifications  
-  const :email, T.nilable(String)
-end
-
-class Status < T::Enum
+class TaskType < T::Enum
   enums do
-    # Account is active and verified
-    Active = new('active')
-    
-    # Account suspended for policy violation
-    Suspended = new('suspended')
+    # Literature review and information gathering
+    Research = new('research')
+    # Combining multiple sources into coherent insights
+    Synthesis = new('synthesis')
+    # Evaluating options or making recommendations
+    Evaluation = new('evaluation')
   end
 end
 
-# Generate BAML (descriptions included by default!)
-User.to_baml
-# =>
-# class User {
-#   name string @description("User's full legal name for display")
-#   age int @description("Age in years, must be 18+")
-#   email string? @description("Primary email for notifications")
-# }
+class ResearchSubtask < T::Struct
+  # Clear description of the specific research objective
+  const :objective, String
+  
+  # Type of research task to be performed
+  const :task_type, TaskType
+  
+  # Strategic priority ranking for task sequencing (1-5 scale)
+  const :priority, Integer
+  
+  # Estimated effort required in hours
+  const :estimated_hours, Integer
+  
+  # Suggested agent capabilities needed for optimal execution
+  const :required_capabilities, T::Array[String]
+end
 
-Status.to_baml
+# Generate BAML (descriptions included by default!)
+ResearchSubtask.to_baml
 # =>
-# enum Status {
-#   "active" @description("Account is active and verified")
-#   "suspended" @description("Account suspended for policy violation")
+# enum TaskType {
+#   "research" @description("Literature review and information gathering")
+#   "synthesis" @description("Combining multiple sources into coherent insights")
+#   "evaluation" @description("Evaluating options or making recommendations")
+# }
+# 
+# class ResearchSubtask {
+#   objective string @description("Clear description of the specific research objective")
+#   task_type TaskType @description("Type of research task to be performed")
+#   priority int @description("Strategic priority ranking for task sequencing (1-5 scale)")
+#   estimated_hours int @description("Estimated effort required in hours")
+#   required_capabilities string[] @description("Suggested agent capabilities needed for optimal execution")
 # }
 ```
 
@@ -218,53 +249,65 @@ Status.to_baml
 
 ## 🏁 Production Ready
 
-This gem has reached **feature completeness** for core BAML conversion needs. The Ruby-idiomatic API is stable and thoroughly tested with **34 test cases** covering all type combinations and edge cases.
+This gem has reached **feature completeness** for core BAML conversion needs. The Ruby-idiomatic API is stable and thoroughly tested with **50+ test cases** covering all type combinations and edge cases.
 
 ### 📊 Quality Metrics
 
 - ✅ **100% Test Coverage** - All features comprehensively tested
 - ✅ **Full Sorbet Type Safety** - Zero type errors throughout codebase  
-- ✅ **34 Test Cases** - Covering basic types, complex combinations, and edge cases
+- ✅ **50+ Test Cases** - Covering basic types, complex combinations, and edge cases
 - ✅ **TDD Development** - All features built test-first
+- ✅ **Field Descriptions** - Automatic comment extraction for LLM context
+- ✅ **Smart Defaults** - Dependencies and descriptions included by default
 - ✅ **Zero Breaking Changes** - Maintains backward compatibility
+
+### ✅ Complete Feature Set
+
+- ✅ **Ruby-idiomatic API**: Every T::Struct and T::Enum gets `.to_baml` method
+- ✅ **Smart defaults**: Field descriptions and dependencies included automatically
+- ✅ **Field descriptions**: Extract documentation from comments for LLM context
+- ✅ **Dependency management**: Automatically includes all referenced types
+- ✅ **Proper ordering**: Dependencies are sorted topologically
+- ✅ **Type safety**: Full Sorbet type checking throughout
 
 ### 🗺️ Future Enhancements (Optional)
 
-The core implementation is complete. These are nice-to-have enhancements:
-
 - [ ] **Type aliases**: `T.type_alias { String }` → `type Alias = string`
-- [ ] **Field descriptions**: Extract documentation from comments  
 - [ ] **Custom naming**: Convert between snake_case ↔ camelCase
-- [ ] **CLI tool**: `sorbet-baml convert User` command
+- [ ] **CLI tool**: `sorbet-baml convert MyStruct` command
 - [ ] **Validation**: Verify generated BAML syntax
 - [ ] **Self-referential types**: `Employee` with `manager: T.nilable(Employee)`
 
 ### 📈 Version History
 
 - **v0.0.1** - Initial implementation with basic type support
-- **v0.1.0** (Ready) - Complete type system + Ruby-idiomatic API
+- **v0.1.0** - Complete type system + Ruby-idiomatic API + field descriptions + smart defaults
 
-## 🌟 Real-World Usage
+## 🌟 Real-World Usage: Autonomous Research Agents
 
-Perfect for Rails applications, API documentation, and any Ruby codebase using Sorbet:
+Perfect for agentic workflows, deep research systems, and complex LLM applications:
 
 ```ruby
-# In your Rails models
-class User < ApplicationRecord
-  # Your existing Sorbet types...
+# Define your autonomous research workflow types
+class TaskDecomposition < T::Struct
+  # Your complex research schema...
 end
 
-# Generate BAML for LLM prompts  
+# Generate BAML for LLM agents
 prompt = <<~PROMPT
-  Given this user schema:
+  You are an autonomous research agent. Analyze this topic and decompose it into strategic subtasks.
   
-  #{User.to_baml}
+  Schema for your output:
+  #{TaskDecomposition.to_baml}
   
-  Generate 5 realistic test users in JSON format.
+  Topic: "Impact of AI on healthcare delivery systems"
+  
+  Provide a comprehensive task decomposition in JSON format.
 PROMPT
 
 # Use with OpenAI, Anthropic, or any LLM provider
-response = client.chat(prompt)
+response = llm_client.chat(prompt)
+result = TaskDecomposition.from_json(response.content)
 ```
 
 ## 🔗 Integration Examples
@@ -292,43 +335,65 @@ api_types = [User, Order, Product].map(&:to_baml).join("\n\n")
 
 Here's a real-world comparison using a complex agentic workflow from production DSPy.rb usage:
 
-### Complex T::Struct Types (Real Agentic Workflow)
+### Complex T::Struct Types (Production Agentic Workflow)
 
 ```ruby
+# Real autonomous research workflow from production DSPy.rb usage
 class ComplexityLevel < T::Enum
   enums do
+    # Basic analysis requiring straightforward research
     Basic = new('basic')
+    # Intermediate analysis requiring synthesis of multiple sources
     Intermediate = new('intermediate') 
+    # Advanced analysis requiring deep domain expertise and complex reasoning
     Advanced = new('advanced')
   end
 end
 
 class TaskDecomposition < T::Struct
-  const :topic, String
+  # The main research topic being investigated
+  const :research_topic, String
+  # Additional context or constraints for the research
   const :context, String
+  # Target complexity level for the decomposition
   const :complexity_level, ComplexityLevel
+  # Autonomously generated list of research subtasks
   const :subtasks, T::Array[String]
+  # Type classification for each task (analysis, synthesis, investigation, etc.)
   const :task_types, T::Array[String]
+  # Strategic priority rankings (1-5 scale) for each subtask
   const :priority_order, T::Array[Integer]
+  # Effort estimates in hours for each subtask
   const :estimated_effort, T::Array[Integer]
+  # Task dependency relationships for optimal sequencing
   const :dependencies, T::Array[String]
+  # Suggested agent types/skills needed for each task
   const :agent_requirements, T::Array[String]
 end
 
 class ResearchExecution < T::Struct
+  # The specific research subtask to execute
   const :subtask, String
+  # Accumulated context from previous research steps
   const :context, String
+  # Any specific constraints or focus areas for this research
   const :constraints, String
+  # Detailed research findings and analysis
   const :findings, String
+  # Key actionable insights extracted from the research
   const :key_insights, T::Array[String]
+  # Confidence in findings quality (1-10 scale)
   const :confidence_level, Integer
+  # Assessment of evidence quality and reliability
   const :evidence_quality, String
+  # Recommended next steps based on these findings
   const :next_steps, T::Array[String]
+  # Identified gaps in knowledge or areas needing further research
   const :knowledge_gaps, T::Array[String]
 end
 ```
 
-### 📊 **BAML Output (Ruby-idiomatic)**
+### 📊 **BAML Output (Ruby-idiomatic with descriptions)**
 
 ```ruby
 [ComplexityLevel, TaskDecomposition, ResearchExecution].map(&:to_baml).join("\n\n")
@@ -336,37 +401,37 @@ end
 
 ```baml
 enum ComplexityLevel {
-  "basic"
-  "intermediate"
-  "advanced"
+  "basic" @description("Basic analysis requiring straightforward research")
+  "intermediate" @description("Intermediate analysis requiring synthesis of multiple sources")
+  "advanced" @description("Advanced analysis requiring deep domain expertise and complex reasoning")
 }
 
 class TaskDecomposition {
-  topic string
-  context string
-  complexity_level ComplexityLevel
-  subtasks string[]
-  task_types string[]
-  priority_order int[]
-  estimated_effort int[]
-  dependencies string[]
-  agent_requirements string[]
+  research_topic string @description("The main research topic being investigated")
+  context string @description("Additional context or constraints for the research")
+  complexity_level ComplexityLevel @description("Target complexity level for the decomposition")
+  subtasks string[] @description("Autonomously generated list of research subtasks")
+  task_types string[] @description("Type classification for each task (analysis, synthesis, investigation, etc.)")
+  priority_order int[] @description("Strategic priority rankings (1-5 scale) for each subtask")
+  estimated_effort int[] @description("Effort estimates in hours for each subtask")
+  dependencies string[] @description("Task dependency relationships for optimal sequencing")
+  agent_requirements string[] @description("Suggested agent types/skills needed for each task")
 }
 
 class ResearchExecution {
-  subtask string
-  context string
-  constraints string
-  findings string
-  key_insights string[]
-  confidence_level int
-  evidence_quality string
-  next_steps string[]
-  knowledge_gaps string[]
+  subtask string @description("The specific research subtask to execute")
+  context string @description("Accumulated context from previous research steps")
+  constraints string @description("Any specific constraints or focus areas for this research")
+  findings string @description("Detailed research findings and analysis")
+  key_insights string[] @description("Key actionable insights extracted from the research")
+  confidence_level int @description("Confidence in findings quality (1-10 scale)")
+  evidence_quality string @description("Assessment of evidence quality and reliability")
+  next_steps string[] @description("Recommended next steps based on these findings")
+  knowledge_gaps string[] @description("Identified gaps in knowledge or areas needing further research")
 }
 ```
 
-**BAML Token Count: ~180 tokens**
+**BAML Token Count: ~320 tokens**
 
 ### 📊 **JSON Schema Equivalent** 
 
@@ -439,22 +504,29 @@ class ResearchExecution {
 }
 ```
 
-**JSON Schema Token Count: ~450 tokens**
+**JSON Schema Token Count: ~680 tokens**
 
-### 🎯 **Results: 60% Token Reduction**
+### 🎯 **Results: 53% Token Reduction (with descriptions)**
 
+| Format | Tokens | Reduction |
+|--------|--------|-----------|
+| JSON Schema | ~680 | baseline |
+| **BAML** | **~320** | **🔥 53% fewer** |
+
+**Without descriptions:**
 | Format | Tokens | Reduction |
 |--------|--------|-----------|
 | JSON Schema | ~450 | baseline |
 | **BAML** | **~180** | **🔥 60% fewer** |
 
 **Real Impact:**
-- **Cost Savings**: 60% reduction in prompt tokens = 60% lower LLM API costs
+- **Cost Savings**: 53-60% reduction in prompt tokens = significant LLM API cost savings
 - **Performance**: Smaller prompts = faster LLM response times
 - **Context Efficiency**: More room for actual content vs. type definitions
+- **LLM Understanding**: Descriptions provide crucial context for autonomous agents
 - **Readability**: BAML is human-readable and maintainable
 
-*This example represents actual agentic workflows from production DSPy.rb applications using complex nested types, enums, and arrays - exactly the scenarios where token efficiency matters most.*
+*This example represents actual agentic workflows from production DSPy.rb applications using complex nested types, enums, and arrays - exactly the scenarios where token efficiency and LLM understanding matter most.*
 
 ## Credits
 

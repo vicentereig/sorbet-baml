@@ -1,6 +1,6 @@
 # Type Mapping Reference
 
-Complete mapping between Sorbet types and BAML output. All listed types are **fully supported**.
+Complete mapping between Sorbet types and BAML output for autonomous LLM workflows. All listed types are **fully supported** with automatic field descriptions.
 
 ## Basic Types
 
@@ -56,112 +56,135 @@ Complete mapping between Sorbet types and BAML output. All listed types are **fu
 
 ## Structured Types
 
-### T::Struct to BAML Classes
+### T::Struct to BAML Classes (Research Workflow Example)
 
 ```ruby
-class Address < T::Struct
-  const :street, String
-  const :city, String
-  const :postal_code, T.nilable(String)
-end
-
-class User < T::Struct
-  const :name, String
-  const :age, Integer
-  const :address, Address
-  const :tags, T::Array[String]
-end
-```
-
-```ruby
-User.to_baml
-```
-
-**Generated BAML:**
-```baml
-class User {
-  name string
-  age int
-  address Address
-  tags string[]
-}
-```
-
-### T::Enum to BAML Enums
-
-```ruby
-class Status < T::Enum
+class ConfidenceLevel < T::Enum
   enums do
-    Active = new('active')
-    Inactive = new('inactive')
-    Pending = new('pending')
-  end
-end
-
-class User < T::Struct
-  const :name, String
-  const :status, Status
-end
-```
-
-```ruby
-[Status, User].map(&:to_baml).join("\n\n")
-```
-
-**Generated BAML:**
-```baml
-enum Status {
-  "active"
-  "inactive"
-  "pending"
-}
-
-class User {
-  name string
-  status Status
-}
-```
-
-### Complex Real-World Example
-
-```ruby
-class Priority < T::Enum
-  enums do
+    # Low confidence, requires further verification
     Low = new('low')
-    Medium = new('medium')
+    # High confidence, strongly supported by evidence
     High = new('high')
   end
 end
 
-class Task < T::Struct
-  const :title, String
-  const :description, T.nilable(String)
-  const :priority, Priority
-  const :tags, T::Array[String]
-  const :metadata, T::Hash[String, T.any(String, Integer)]
-  const :subtasks, T::Array[Task]
+class ResearchFindings < T::Struct
+  # Detailed research findings and analysis
+  const :findings, String
+  # Key actionable insights extracted
+  const :key_insights, T::Array[String]
+  # Assessment of evidence quality
+  const :evidence_quality, ConfidenceLevel
+  # Confidence score (1-10 scale)
+  const :confidence_score, Integer
 end
 ```
 
 ```ruby
-[Priority, Task].map(&:to_baml).join("\n\n")
+ResearchFindings.to_baml
 ```
 
 **Generated BAML:**
 ```baml
-enum Priority {
-  "low"
-  "medium"
-  "high"
+enum ConfidenceLevel {
+  "low" @description("Low confidence, requires further verification")
+  "high" @description("High confidence, strongly supported by evidence")
 }
 
-class Task {
-  title string
-  description string?
-  priority Priority
-  tags string[]
-  metadata map<string, string | int>
-  subtasks Task[]
+class ResearchFindings {
+  findings string @description("Detailed research findings and analysis")
+  key_insights string[] @description("Key actionable insights extracted")
+  evidence_quality ConfidenceLevel @description("Assessment of evidence quality")
+  confidence_score int @description("Confidence score (1-10 scale)")
+}
+```
+
+### T::Enum to BAML Enums (Task Classification)
+
+```ruby
+class TaskType < T::Enum
+  enums do
+    # Literature review and information gathering
+    Research = new('research')
+    # Data analysis and statistical interpretation
+    Analysis = new('analysis')
+    # Combining multiple sources into coherent insights
+    Synthesis = new('synthesis')
+  end
+end
+
+class ResearchTask < T::Struct
+  # Clear description of the research objective
+  const :objective, String
+  # Type of research task to be performed
+  const :task_type, TaskType
+end
+```
+
+```ruby
+[TaskType, ResearchTask].map(&:to_baml).join("\n\n")
+```
+
+**Generated BAML:**
+```baml
+enum TaskType {
+  "research" @description("Literature review and information gathering")
+  "analysis" @description("Data analysis and statistical interpretation")
+  "synthesis" @description("Combining multiple sources into coherent insights")
+}
+
+class ResearchTask {
+  objective string @description("Clear description of the research objective")
+  task_type TaskType @description("Type of research task to be performed")
+}
+```
+
+### Complex Real-World Example (Autonomous Research Agent)
+
+```ruby
+class ComplexityLevel < T::Enum
+  enums do
+    # Basic analysis requiring straightforward research
+    Basic = new('basic')
+    # Advanced analysis requiring deep domain expertise
+    Advanced = new('advanced')
+  end
+end
+
+class TaskDecomposition < T::Struct
+  # The main research topic being investigated
+  const :research_topic, String
+  # Target complexity level for the decomposition
+  const :complexity_level, ComplexityLevel
+  # Autonomously generated list of research subtasks
+  const :subtasks, T::Array[String]
+  # Strategic priority rankings (1-5 scale) for each subtask
+  const :priority_order, T::Array[Integer]
+  # Task dependency relationships for optimal sequencing
+  const :dependencies, T::Array[String]
+  # Key-value metadata for agent coordination
+  const :agent_metadata, T::Hash[String, T.any(String, Integer)]
+end
+```
+
+```ruby
+[ComplexityLevel, TaskDecomposition].map(&:to_baml).join("\n\n")
+```
+
+**Generated BAML:**
+```baml
+enum ComplexityLevel {
+  "basic" @description("Basic analysis requiring straightforward research")
+  "advanced" @description("Advanced analysis requiring deep domain expertise")
+}
+
+class TaskDecomposition {
+  research_topic string @description("The main research topic being investigated")
+  complexity_level ComplexityLevel @description("Target complexity level for the decomposition")
+  subtasks string[] @description("Autonomously generated list of research subtasks")
+  priority_order int[] @description("Strategic priority rankings (1-5 scale) for each subtask")
+  dependencies string[] @description("Task dependency relationships for optimal sequencing")
+  agent_metadata map<string, string | int> @description("Key-value metadata for agent coordination")
 }
 ```
 
@@ -171,22 +194,37 @@ class Task {
 
 ```ruby
 # Dependencies automatically included with smart defaults
-User.to_baml
-# Outputs Address, then User in correct order
+TaskDecomposition.to_baml
+# Outputs ComplexityLevel enum, then TaskDecomposition class in correct order
+```
+
+### Field Descriptions (Included by Default)
+
+```ruby
+# Smart defaults extract field descriptions from comments
+TaskDecomposition.to_baml
+# Outputs BAML with @description() annotations for LLM context
 ```
 
 ### Custom Formatting
 
 ```ruby
-# Smart defaults include dependencies automatically
-User.to_baml(indent_size: 4)
+# Smart defaults include dependencies and descriptions automatically
+TaskDecomposition.to_baml(indent_size: 4)
+# Disable features if needed:
+TaskDecomposition.to_baml(include_descriptions: false)
 ```
+
+## ✅ Completed Features
+
+- ✅ `T::Struct` → `class Name { ... }` with field descriptions
+- ✅ `T::Enum` → `enum Name { ... }` with value descriptions
+- ✅ Automatic dependency resolution and ordering
+- ✅ Smart defaults (descriptions and dependencies enabled)
+- ✅ Full type safety with Sorbet type checking
 
 ## Future Enhancements (Optional)
 
-These are nice-to-have features for future versions:
-
 - `T.type_alias` → `type Name = ...`
-- Field descriptions from comments
 - Custom naming strategies (snake_case ↔ camelCase)
 - Self-referential type handling

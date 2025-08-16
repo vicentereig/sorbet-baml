@@ -5,14 +5,17 @@
 The gem automatically extends all T::Struct and T::Enum classes with conversion methods:
 
 ```ruby
-class User < T::Struct
-  const :name, String
-  const :age, Integer
+# Define complex autonomous research workflow types
+class ResearchAgent < T::Struct
+  # Agent's specialized domain of expertise
+  const :domain_expertise, String
+  # Current confidence level in assigned research
+  const :confidence_level, Integer
 end
 
 # Ruby-idiomatic - just call the method!
-User.to_baml
-User.baml_type_definition  # Same as to_baml
+ResearchAgent.to_baml
+ResearchAgent.baml_type_definition  # Same as to_baml
 ```
 
 ## Automatic Dependency Management
@@ -20,40 +23,49 @@ User.baml_type_definition  # Same as to_baml
 The most powerful feature is automatic dependency resolution:
 
 ```ruby
-class ContactInfo < T::Struct
-  const :email, String
-  const :phone, T.nilable(String)
+# Autonomous research workflow with complex dependencies
+class TaskType < T::Enum
+  enums do
+    # Literature review and information gathering
+    Research = new('research')
+    # Combining multiple sources into coherent insights
+    Synthesis = new('synthesis')
+  end
 end
 
-class Company < T::Struct
-  const :name, String
-  const :contact, ContactInfo
+class ResearchSubtask < T::Struct
+  # Clear description of the research objective
+  const :objective, String
+  # Type of research task to be performed
+  const :task_type, TaskType
 end
 
-class User < T::Struct
-  const :name, String
-  const :company, Company
+class ResearchPlan < T::Struct
+  # Main research topic being investigated
+  const :research_topic, String
+  # Collection of research subtasks
+  const :subtasks, T::Array[ResearchSubtask]
 end
 
 # Dependencies included automatically with smart defaults!
-User.to_baml
+ResearchPlan.to_baml
 ```
 
-**Generated BAML (with correct ordering):**
+**Generated BAML (with correct ordering and descriptions):**
 ```baml
-class ContactInfo {
-  email string
-  phone string?
+enum TaskType {
+  "research" @description("Literature review and information gathering")
+  "synthesis" @description("Combining multiple sources into coherent insights")
 }
 
-class Company {
-  name string
-  contact ContactInfo
+class ResearchSubtask {
+  objective string @description("Clear description of the research objective")
+  task_type TaskType @description("Type of research task to be performed")
 }
 
-class User {
-  name string
-  company Company
+class ResearchPlan {
+  research_topic string @description("Main research topic being investigated")
+  subtasks ResearchSubtask[] @description("Collection of research subtasks")
 }
 ```
 
@@ -62,76 +74,83 @@ class User {
 ### Manual Collection
 
 ```ruby
-# Convert multiple types manually
-types = [ContactInfo, Company, User]
+# Convert multiple autonomous research types manually
+types = [TaskType, ResearchSubtask, ResearchPlan]
 baml_output = types.map(&:to_baml).join("\n\n")
 ```
 
 ### Legacy API (still supported)
 
 ```ruby
-# Legacy API for multiple structs
-SorbetBaml.from_structs([ContactInfo, Company, User])
+# Legacy API for multiple structs (no smart defaults)
+SorbetBaml.from_structs([TaskType, ResearchSubtask, ResearchPlan])
 
-# Legacy API for single struct
-SorbetBaml.from_struct(User)
+# Legacy API for single struct (no smart defaults)
+SorbetBaml.from_struct(ResearchPlan)
 ```
 
 ## Advanced Type Examples
 
-### Complex Enums with Structs
+### Complex Autonomous Research Workflows
 
 ```ruby
-class OrderStatus < T::Enum
+class ConfidenceLevel < T::Enum
   enums do
-    Pending = new('pending')
-    Processing = new('processing')
-    Shipped = new('shipped')
-    Delivered = new('delivered')
-    Cancelled = new('cancelled')
+    # Low confidence, requires further verification
+    Low = new('low')
+    # Medium confidence, reasonably supported by evidence
+    Medium = new('medium')
+    # High confidence, strongly supported by multiple sources
+    High = new('high')
   end
 end
 
-class OrderItem < T::Struct
-  const :product_id, String
-  const :quantity, Integer
-  const :price, Float
+class ResearchFindings < T::Struct
+  # Detailed research findings and analysis
+  const :findings, String
+  # Key actionable insights extracted
+  const :key_insights, T::Array[String]
+  # Confidence score for findings (1-10 scale)
+  const :confidence_score, Integer
 end
 
-class Order < T::Struct
+class ResearchSynthesis < T::Struct
+  # Unique identifier for the research synthesis
   const :id, String
-  const :status, OrderStatus
-  const :items, T::Array[OrderItem]
-  const :metadata, T::Hash[String, T.any(String, Integer, Float)]
-  const :shipping_address, T.nilable(Address)
+  # Assessment of evidence quality
+  const :evidence_quality, ConfidenceLevel
+  # Collection of research findings
+  const :findings_collection, T::Array[ResearchFindings]
+  # Agent coordination metadata
+  const :agent_metadata, T::Hash[String, T.any(String, Integer, Float)]
+  # Optional peer review notes
+  const :peer_review, T.nilable(String)
 end
 
 # Generate complete type definitions
-[OrderStatus, OrderItem, Order].map(&:to_baml).join("\n\n")
+[ConfidenceLevel, ResearchFindings, ResearchSynthesis].map(&:to_baml).join("\n\n")
 ```
 
 **Generated BAML:**
 ```baml
-enum OrderStatus {
-  "pending"
-  "processing"
-  "shipped"
-  "delivered"
-  "cancelled"
+enum ConfidenceLevel {
+  "low" @description("Low confidence, requires further verification")
+  "medium" @description("Medium confidence, reasonably supported by evidence")
+  "high" @description("High confidence, strongly supported by multiple sources")
 }
 
-class OrderItem {
-  product_id string
-  quantity int
-  price float
+class ResearchFindings {
+  findings string @description("Detailed research findings and analysis")
+  key_insights string[] @description("Key actionable insights extracted")
+  confidence_score int @description("Confidence score for findings (1-10 scale)")
 }
 
-class Order {
-  id string
-  status OrderStatus
-  items OrderItem[]
-  metadata map<string, string | int | float>
-  shipping_address Address?
+class ResearchSynthesis {
+  id string @description("Unique identifier for the research synthesis")
+  evidence_quality ConfidenceLevel @description("Assessment of evidence quality")
+  findings_collection ResearchFindings[] @description("Collection of research findings")
+  agent_metadata map<string, string | int | float> @description("Agent coordination metadata")
+  peer_review string? @description("Optional peer review notes")
 }
 ```
 
@@ -172,31 +191,36 @@ class User {
 }
 ```
 
-### Field Descriptions
+### Field Descriptions (Included by Default)
 
-Extract documentation from Ruby comments to provide LLM context:
+Extract documentation from Ruby comments to provide crucial LLM context for autonomous agents:
 
 ```ruby
-class DocumentedUser < T::Struct
-  # User's full legal name for official records
-  const :full_name, String
+class AgentCapabilities < T::Struct
+  # Specialized domain knowledge for research tasks
+  const :domain_expertise, String
   
-  # Age in years, must be 18 or older for account creation
-  const :age, Integer
+  # Maximum concurrent research tasks the agent can handle
+  const :task_capacity, Integer
   
-  # Primary email address for account notifications
-  const :email, String
+  # Current workload as percentage of total capacity (0-100)
+  const :current_workload, Integer
+  
+  # List of research methodologies the agent can employ
+  const :research_methods, T::Array[String]
 end
 
-DocumentedUser.to_baml
+# Field descriptions included by default!
+AgentCapabilities.to_baml
 ```
 
 **Generated BAML with descriptions:**
 ```baml
-class DocumentedUser {
-  full_name string @description("User's full legal name for official records")
-  age int @description("Age in years, must be 18 or older for account creation")
-  email string @description("Primary email address for account notifications")
+class AgentCapabilities {
+  domain_expertise string @description("Specialized domain knowledge for research tasks")
+  task_capacity int @description("Maximum concurrent research tasks the agent can handle")
+  current_workload int @description("Current workload as percentage of total capacity (0-100)")
+  research_methods string[] @description("List of research methodologies the agent can employ")
 }
 ```
 
@@ -204,10 +228,10 @@ class DocumentedUser {
 
 ```ruby
 # Smart defaults: dependencies and descriptions already included!
-User.to_baml(indent_size: 4)
+ResearchSynthesis.to_baml(indent_size: 4)
 
-# Or disable features if needed
-User.to_baml(
+# Or disable features if needed for specific use cases
+ResearchSynthesis.to_baml(
   include_dependencies: false,
   include_descriptions: false,
   indent_size: 4
@@ -219,18 +243,18 @@ User.to_baml(
 ### Single File Output
 
 ```ruby
-# Generate and write to file (dependencies included by default)
-baml_content = User.to_baml
-File.write("types/user.baml", baml_content)
+# Generate and write autonomous research schema to file
+baml_content = ResearchSynthesis.to_baml
+File.write("schemas/research_workflow.baml", baml_content)
 ```
 
 ### Multiple Files
 
 ```ruby
-# Generate separate files for each type
-[User, Company, ContactInfo].each do |type|
+# Generate separate files for each research workflow type
+[ConfidenceLevel, ResearchFindings, ResearchSynthesis].each do |type|
   filename = type.name.downcase.gsub('::', '_')
-  File.write("types/#{filename}.baml", type.to_baml)
+  File.write("schemas/#{filename}.baml", type.to_baml)
 end
 ```
 
@@ -238,16 +262,17 @@ end
 
 ```ruby
 # Rakefile
-desc "Generate BAML type definitions"
+desc "Generate BAML schemas for autonomous agents"
 task :generate_baml do
   require 'sorbet-baml'
-  require_relative 'app/models'
+  require_relative 'lib/research_types'
   
-  types = [User, Company, Order, Product] # Your app types
+  # Your autonomous research workflow types
+  types = [TaskType, ResearchSubtask, ResearchFindings, ResearchSynthesis]
   baml_content = types.map(&:to_baml).join("\n\n")
   
-  File.write("lib/types.baml", baml_content)
-  puts "Generated BAML types in lib/types.baml"
+  File.write("schemas/research_agents.baml", baml_content)
+  puts "Generated BAML schemas for research agents in schemas/research_agents.baml"
 end
 ```
 

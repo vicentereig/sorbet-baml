@@ -10,23 +10,24 @@
 
 ```ruby
 # ❌ Wrong
-class User
-  attr_reader :name
+class ResearchAgent
+  attr_reader :domain_expertise
 end
 
 # ✅ Correct
-class User < T::Struct
-  const :name, String
+class ResearchAgent < T::Struct
+  # Agent's specialized domain of expertise
+  const :domain_expertise, String
 end
 
-# Generate BAML
-User.to_baml
+# Generate BAML (descriptions included by default!)
+ResearchAgent.to_baml
 ```
 
 **Generated BAML:**
 ```baml
-class User {
-  name string
+class ResearchAgent {
+  domain_expertise string @description("Agent's specialized domain of expertise")
 }
 ```
 
@@ -37,19 +38,21 @@ class User {
 **Solution**: Define at least one property using `const` or `prop`:
 
 ```ruby
-class User < T::Struct
-  const :name, String  # Add properties
-  const :age, Integer
+class ResearchAgent < T::Struct
+  # Agent's specialized domain of expertise
+  const :domain_expertise, String
+  # Maximum concurrent research tasks
+  const :task_capacity, Integer
 end
 
-User.to_baml
+ResearchAgent.to_baml
 ```
 
 **Generated BAML:**
 ```baml
-class User {
-  name string
-  age int
+class ResearchAgent {
+  domain_expertise string @description("Agent's specialized domain of expertise")
+  task_capacity int @description("Maximum concurrent research tasks")
 }
 ```
 
@@ -60,21 +63,24 @@ class User {
 **Solution**: They actually work perfectly! Self-referential types are fully supported:
 
 ```ruby
-class Category < T::Struct
-  const :name, String
-  const :parent, T.nilable(Category)
-  const :children, T::Array[Category]
+class ResearchHierarchy < T::Struct
+  # Name of the research domain or subdomain
+  const :domain_name, String
+  # Parent research domain for hierarchical organization
+  const :parent_domain, T.nilable(ResearchHierarchy)
+  # Child research subdomains
+  const :subdomains, T::Array[ResearchHierarchy]
 end
 
-Category.to_baml
+ResearchHierarchy.to_baml
 ```
 
 **Generated BAML:**
 ```baml
-class Category {
-  name string
-  parent Category?
-  children Category[]
+class ResearchHierarchy {
+  domain_name string @description("Name of the research domain or subdomain")
+  parent_domain ResearchHierarchy? @description("Parent research domain for hierarchical organization")
+  subdomains ResearchHierarchy[] @description("Child research subdomains")
 }
 ```
 
@@ -86,22 +92,23 @@ Ensure you're using the Sorbet array syntax:
 
 ```ruby
 # ❌ Wrong
-class User < T::Struct
-  const :items, Array  # Generic Array won't work
+class ResearchAgent < T::Struct
+  const :research_methods, Array  # Generic Array won't work
 end
 
 # ✅ Correct
-class User < T::Struct
-  const :items, T::Array[String]
+class ResearchAgent < T::Struct
+  # List of research methodologies the agent can employ
+  const :research_methods, T::Array[String]
 end
 
-User.to_baml
+ResearchAgent.to_baml
 ```
 
 **Generated BAML:**
 ```baml
-class User {
-  items string[]
+class ResearchAgent {
+  research_methods string[] @description("List of research methodologies the agent can employ")
 }
 ```
 
@@ -111,22 +118,24 @@ Make sure to use `T.nilable`:
 
 ```ruby
 # ❌ Wrong - will be required
-class User < T::Struct
-  const :email, String
+class ResearchAgent < T::Struct
+  # Peer review notes
+  const :peer_review, String
 end
 
 # ✅ Correct - will be optional
-class User < T::Struct
-  const :email, T.nilable(String)
+class ResearchAgent < T::Struct
+  # Optional peer review notes
+  const :peer_review, T.nilable(String)
 end
 
-User.to_baml
+ResearchAgent.to_baml
 ```
 
 **Generated BAML:**
 ```baml
-class User {
-  email string?
+class ResearchAgent {
+  peer_review string? @description("Optional peer review notes")
 }
 ```
 
@@ -136,22 +145,23 @@ Ensure you're using `T.any` for union types:
 
 ```ruby
 # ❌ Wrong
-class Config < T::Struct
-  const :value, String || Integer  # Ruby OR, not Sorbet union
+class ResearchConfig < T::Struct
+  const :parameter_value, String || Integer  # Ruby OR, not Sorbet union
 end
 
 # ✅ Correct
-class Config < T::Struct
-  const :value, T.any(String, Integer)
+class ResearchConfig < T::Struct
+  # Configuration parameter supporting multiple value types
+  const :parameter_value, T.any(String, Integer)
 end
 
-Config.to_baml
+ResearchConfig.to_baml
 ```
 
 **Generated BAML:**
 ```baml
-class Config {
-  value string | int
+class ResearchConfig {
+  parameter_value string | int @description("Configuration parameter supporting multiple value types")
 }
 ```
 
@@ -161,22 +171,23 @@ Use the full `T::Hash[K, V]` syntax:
 
 ```ruby
 # ❌ Wrong
-class User < T::Struct
-  const :metadata, Hash  # Generic Hash won't work
+class ResearchAgent < T::Struct
+  const :agent_metadata, Hash  # Generic Hash won't work
 end
 
 # ✅ Correct
-class User < T::Struct
-  const :metadata, T::Hash[String, T.any(String, Integer)]
+class ResearchAgent < T::Struct
+  # Agent coordination metadata with flexible value types
+  const :agent_metadata, T::Hash[String, T.any(String, Integer)]
 end
 
-User.to_baml
+ResearchAgent.to_baml
 ```
 
 **Generated BAML:**
 ```baml
-class User {
-  metadata map<string, string | int>
+class ResearchAgent {
+  agent_metadata map<string, string | int> @description("Agent coordination metadata with flexible value types")
 }
 ```
 
@@ -184,36 +195,39 @@ class User {
 
 ### Missing dependencies in output
 
-Use `include_dependencies: true` to automatically include all referenced types:
+Dependencies are included by default! Smart defaults make this automatic:
 
 ```ruby
-class Address < T::Struct
-  const :street, String
-  const :city, String
+class TaskType < T::Enum
+  enums do
+    # Literature review and information gathering
+    Research = new('research')
+  end
 end
 
-class User < T::Struct
-  const :name, String
-  const :address, Address
+class ResearchTask < T::Struct
+  # Clear description of the research objective
+  const :objective, String
+  # Type of research task to be performed
+  const :task_type, TaskType
 end
 
-# ❌ Only outputs User class
-User.to_baml
+# ✅ Smart defaults: outputs both TaskType and ResearchTask automatically
+ResearchTask.to_baml
 
-# ✅ Outputs both Address and User in correct order
-User.to_baml(include_dependencies: true)
+# ❌ Only if you explicitly disable dependencies
+ResearchTask.to_baml(include_dependencies: false)
 ```
 
-**Generated BAML (with dependencies):**
+**Generated BAML (with dependencies by default):**
 ```baml
-class Address {
-  street string
-  city string
+enum TaskType {
+  "research" @description("Literature review and information gathering")
 }
 
-class User {
-  name string
-  address Address
+class ResearchTask {
+  objective string @description("Clear description of the research objective")
+  task_type TaskType @description("Type of research task to be performed")
 }
 ```
 
@@ -229,27 +243,29 @@ Ensure you're using the correct T::Enum syntax:
 
 ```ruby
 # ❌ Wrong
-class Status
+class ResearchStatus
   ACTIVE = 'active'
-  INACTIVE = 'inactive'
+  COMPLETED = 'completed'
 end
 
 # ✅ Correct
-class Status < T::Enum
+class ResearchStatus < T::Enum
   enums do
+    # Research is actively in progress
     Active = new('active')
-    Inactive = new('inactive')
+    # Research has been completed successfully
+    Completed = new('completed')
   end
 end
 
-Status.to_baml
+ResearchStatus.to_baml
 ```
 
 **Generated BAML:**
 ```baml
-enum Status {
-  "active"
-  "inactive"
+enum ResearchStatus {
+  "active" @description("Research is actively in progress")
+  "completed" @description("Research has been completed successfully")
 }
 ```
 
@@ -280,12 +296,16 @@ MyEnum.values
 ### Testing your BAML output
 
 ```ruby
-# Verify the output looks correct
-baml = User.to_baml(include_dependencies: true)
+# Verify the output looks correct (dependencies included by default)
+baml = ResearchTask.to_baml
 puts baml
 
 # Check that all expected types are included
-expected_types = ['class User', 'class Address', 'enum Status']
+expected_types = ['class ResearchTask', 'enum TaskType']
 expected_types.all? { |type| baml.include?(type) }
+# => true
+
+# Verify descriptions are included
+baml.include?('@description')
 # => true
 ```
