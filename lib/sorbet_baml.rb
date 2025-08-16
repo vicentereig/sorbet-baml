@@ -5,6 +5,7 @@ require "sorbet-runtime"
 require_relative "sorbet_baml/version"
 require_relative "sorbet_baml/converter"
 require_relative "sorbet_baml/type_mapper"
+require_relative "sorbet_baml/struct_extensions"
 
 module SorbetBaml
   class Error < StandardError; end
@@ -23,3 +24,6 @@ module SorbetBaml
     Converter.from_structs(klasses, options)
   end
 end
+
+# Extend T::Struct with BAML conversion methods
+T::Struct.extend(SorbetBaml::StructExtensions)
