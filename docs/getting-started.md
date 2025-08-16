@@ -2,7 +2,7 @@
 
 ## Prerequisites
 
-- Ruby 3.1+
+- Ruby 3.2+
 - Sorbet installed in your project
 - Basic familiarity with T::Struct
 
