@@ -102,7 +102,7 @@ module SorbetBaml
           current_comment = current_comment ? "#{current_comment} #{comment_text}" : comment_text
         elsif stripped.match(/^const\s+:(\w+)/) && current_comment
           field_name = T.must(stripped.match(/^const\s+:(\w+)/))[1]
-          comments[field_name] = current_comment
+          comments[T.must(field_name)] = current_comment
           current_comment = nil
         elsif !stripped.empty? && !stripped.start_with?('#')
           # Reset comment if we hit non-comment, non-const line
@@ -149,11 +149,11 @@ module SorbetBaml
         
         # Extract comment
         if stripped.start_with?('#')
-          comment_text = stripped[1..-1].strip
+          comment_text = T.must(stripped[1..-1]).strip
           current_comment = current_comment ? "#{current_comment} #{comment_text}" : comment_text
         elsif stripped.match(/^(\w+)\s*=\s*new/) && current_comment
-          enum_name = stripped.match(/^(\w+)\s*=\s*new/)[1]
-          comments[enum_name] = current_comment
+          enum_name = T.must(stripped.match(/^(\w+)\s*=\s*new/))[1]
+          comments[T.must(enum_name)] = current_comment
           current_comment = nil
         elsif !stripped.empty? && !stripped.start_with?('#')
           # Reset comment if we hit non-comment, non-enum line
