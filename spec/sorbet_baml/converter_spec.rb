@@ -3,19 +3,13 @@
 
 require "spec_helper"
 require "sorbet-runtime"
+require_relative "../fixtures/test_structs"
 
 RSpec.describe SorbetBaml::Converter do
   describe ".from_struct" do
     context "with a simple struct" do
-      before do
-        stub_const("SimpleUser", Class.new(T::Struct) do
-          const :name, String
-          const :age, Integer
-        end)
-      end
-      
       it "converts basic types correctly" do
-        result = described_class.from_struct(SimpleUser)
+        result = described_class.from_struct(SorbetBaml::TestFixtures::SimpleUser)
         
         expect(result).to eq(<<~BAML.strip)
           class SimpleUser {
@@ -27,16 +21,8 @@ RSpec.describe SorbetBaml::Converter do
     end
     
     context "with optional fields" do
-      before do
-        stub_const("UserWithOptionals", Class.new(T::Struct) do
-          const :name, String
-          const :email, T.nilable(String)
-          const :age, T.nilable(Integer)
-        end)
-      end
-      
       it "converts nilable types to optional" do
-        result = described_class.from_struct(UserWithOptionals)
+        result = described_class.from_struct(SorbetBaml::TestFixtures::UserWithOptionals)
         
         expect(result).to eq(<<~BAML.strip)
           class UserWithOptionals {
@@ -49,15 +35,8 @@ RSpec.describe SorbetBaml::Converter do
     end
     
     context "with array fields" do
-      before do
-        stub_const("UserWithArrays", Class.new(T::Struct) do
-          const :tags, T::Array[String]
-          const :scores, T::Array[Integer]
-        end)
-      end
-      
       it "converts array types correctly" do
-        result = described_class.from_struct(UserWithArrays)
+        result = described_class.from_struct(SorbetBaml::TestFixtures::UserWithArrays)
         
         expect(result).to eq(<<~BAML.strip)
           class UserWithArrays {
@@ -69,20 +48,8 @@ RSpec.describe SorbetBaml::Converter do
     end
     
     context "with nested structs" do
-      before do
-        stub_const("Address", Class.new(T::Struct) do
-          const :street, String
-          const :city, String
-        end)
-        
-        stub_const("UserWithAddress", Class.new(T::Struct) do
-          const :name, String
-          const :address, Address
-        end)
-      end
-      
       it "references nested struct types" do
-        result = described_class.from_struct(UserWithAddress)
+        result = described_class.from_struct(SorbetBaml::TestFixtures::UserWithAddress)
         
         expect(result).to eq(<<~BAML.strip)
           class UserWithAddress {
@@ -95,20 +62,8 @@ RSpec.describe SorbetBaml::Converter do
   end
   
   describe ".from_structs" do
-    before do
-      stub_const("Address", Class.new(T::Struct) do
-        const :street, String
-        const :city, String
-      end)
-      
-      stub_const("User", Class.new(T::Struct) do
-        const :name, String
-        const :address, Address
-      end)
-    end
-    
     it "converts multiple structs" do
-      result = described_class.from_structs([Address, User])
+      result = described_class.from_structs([SorbetBaml::TestFixtures::Address, SorbetBaml::TestFixtures::User])
       
       expect(result).to eq(<<~BAML.strip)
         class Address {
