@@ -13,12 +13,8 @@ description: "Ruby-idiomatic conversion from Sorbet types to BAML for efficient 
   <div class="flex flex-wrap justify-center gap-4 mt-8">
     <img src="https://img.shields.io/gem/v/sorbet-baml" alt="Gem Version" />
     <img src="https://img.shields.io/gem/dt/sorbet-baml" alt="Total Downloads" />
-    <img src="https://img.shields.io/github/actions/workflow/status/vicentereig/sorbet-baml/ci.yml?branch=main" alt="Build Status" />
-    <img src="https://img.shields.io/badge/docs-latest-blue" alt="Documentation" />
     <img src="https://img.shields.io/github/license/vicentereig/sorbet-baml" alt="License" />
-    <img src="https://img.shields.io/gem/required_ruby_version/sorbet-baml" alt="Ruby Version" />
     <img src="https://img.shields.io/badge/Sorbet-compatible-blue" alt="Sorbet Compatible" />
-    <img src="https://img.shields.io/badge/tokens-60%25_fewer-success" alt="Token Efficient" />
   </div>
   
   <div class="flex flex-wrap justify-center gap-4 mt-6">

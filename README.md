@@ -2,12 +2,8 @@
 
 [![Gem Version](https://img.shields.io/gem/v/sorbet-baml)](https://rubygems.org/gems/sorbet-baml)
 [![Total Downloads](https://img.shields.io/gem/dt/sorbet-baml)](https://rubygems.org/gems/sorbet-baml)
-[![Build Status](https://img.shields.io/github/actions/workflow/status/vicentereig/sorbet-baml/ci.yml?branch=main)](https://github.com/vicentereig/sorbet-baml/actions)
-[![Documentation](https://img.shields.io/badge/docs-latest-blue)](https://vicentereig.github.io/sorbet-baml)
 [![License](https://img.shields.io/github/license/vicentereig/sorbet-baml)](https://github.com/vicentereig/sorbet-baml/blob/main/LICENSE.txt)
-[![Ruby Version](https://img.shields.io/gem/required_ruby_version/sorbet-baml)](https://rubygems.org/gems/sorbet-baml)
 [![Sorbet Compatible](https://img.shields.io/badge/Sorbet-compatible-blue)](https://sorbet.org)
-[![Token Efficient](https://img.shields.io/badge/tokens-60%25_fewer-success)](https://github.com/vicentereig/sorbet-baml)
 
 Ruby-idiomatic conversion from Sorbet types to BAML (Boundary AI Markup Language) for efficient LLM prompting.
 
