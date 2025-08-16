@@ -1,3 +1,9 @@
+---
+layout: doc
+title: "Advanced Usage"
+description: "Advanced features including dependency management, field descriptions, custom formatting, and complex type scenarios."
+---
+
 # Advanced Usage
 
 ## Ruby-Idiomatic API

@@ -1,3 +1,9 @@
+---
+layout: doc
+title: "Type Mapping Reference"
+description: "Complete mapping between Sorbet types and BAML output. Learn how every Sorbet type converts to efficient BAML format."
+---
+
 # Type Mapping Reference
 
 Complete mapping between Sorbet types and BAML output for autonomous LLM workflows. All listed types are **fully supported** with automatic field descriptions.

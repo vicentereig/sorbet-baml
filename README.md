@@ -1,5 +1,8 @@
 # sorbet-baml
 
+[![Gem Version](https://img.shields.io/gem/v/sorbet-baml)](https://rubygems.org/gems/sorbet-baml)
+[![Total Downloads](https://img.shields.io/gem/dt/sorbet-baml)](https://rubygems.org/gems/sorbet-baml)
+
 Ruby-idiomatic conversion from Sorbet types to BAML (Boundary AI Markup Language) for efficient LLM prompting.
 
 ## What is this?

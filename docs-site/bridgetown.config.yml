@@ -1,0 +1,15 @@
+# Welcome to Bridgetown!
+#
+# This config file is for settings that affect your whole site, values
+# which you are expected to set up once and rarely edit after that.
+
+url: "https://vicentereig.github.io"
+base_path: "/sorbet-baml"
+
+permalink: "/:title/"
+template_engine: liquid
+
+# Meta information
+title: "sorbet-baml"
+description: "Ruby-idiomatic conversion from Sorbet types to BAML for efficient LLM prompting"
+author: "Vicente Reig"

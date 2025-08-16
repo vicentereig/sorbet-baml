@@ -1,3 +1,9 @@
+---
+layout: doc
+title: "Troubleshooting"
+description: "Common issues and solutions when using sorbet-baml. Find quick fixes for installation, conversion, and usage problems."
+---
+
 # Troubleshooting
 
 ## Common Issues

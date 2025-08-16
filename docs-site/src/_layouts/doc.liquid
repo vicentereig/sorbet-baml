@@ -1,0 +1,39 @@
+---
+layout: default
+---
+
+<div class="lg:grid lg:grid-cols-4 lg:gap-8">
+  <!-- Sidebar navigation -->
+  <div class="lg:col-span-1">
+    <div class="sticky top-20">
+      <nav class="space-y-1">
+        <h3 class="text-lg font-semibold text-gray-900 mb-4">Documentation</h3>
+        <a href="{{ '/getting-started/' | relative_url }}" class="nav-link {% if page.url contains 'getting-started' %}active{% endif %}">
+          Getting Started
+        </a>
+        <a href="{{ '/type-mapping/' | relative_url }}" class="nav-link {% if page.url contains 'type-mapping' %}active{% endif %}">
+          Type Mapping
+        </a>
+        <a href="{{ '/advanced-usage/' | relative_url }}" class="nav-link {% if page.url contains 'advanced-usage' %}active{% endif %}">
+          Advanced Usage
+        </a>
+        <a href="{{ '/troubleshooting/' | relative_url }}" class="nav-link {% if page.url contains 'troubleshooting' %}active{% endif %}">
+          Troubleshooting
+        </a>
+      </nav>
+    </div>
+  </div>
+  
+  <!-- Main content -->
+  <div class="lg:col-span-3 mt-8 lg:mt-0">
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-8">
+      {% if title %}
+        <h1 class="text-3xl font-bold text-gray-900 mb-6">{{ title }}</h1>
+      {% endif %}
+      
+      <div class="prose prose-lg max-w-none">
+        {{ content }}
+      </div>
+    </div>
+  </div>
+</div>

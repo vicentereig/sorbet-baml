@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    {% render "head", title: title, description: description %}
+  </head>
+  <body class="bg-gray-50 min-h-screen">
+    {% render "nav" %}
+    
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      {{ content }}
+    </main>
+    
+    <footer class="bg-white border-t border-gray-200 mt-16">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="text-center text-gray-600">
+          <p>&copy; 2025 <a href="mailto:hey@vicente.services" class="text-blue-600 hover:text-blue-800">Vicente Reig</a>. MIT License.</p>
+          <p class="mt-2">
+            <a href="https://github.com/vicentereig/sorbet-baml" class="text-blue-600 hover:text-blue-800">GitHub</a> •
+            <a href="https://rubygems.org/gems/sorbet-baml" class="text-blue-600 hover:text-blue-800">RubyGems</a>
+          </p>
+        </div>
+      </div>
+    </footer>
+    
+    {% webpack_path js %}
+  </body>
+</html>

@@ -1,3 +1,9 @@
+---
+layout: doc
+title: "Getting Started"
+description: "Learn how to install and use sorbet-baml to convert your Sorbet types to BAML for efficient LLM prompting."
+---
+
 # Getting Started
 
 ## Prerequisites

@@ -1,0 +1,25 @@
+<title>{% if title %}{{ title }} | {% endif %}{{ site.title }}</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="description" content="{% if description %}{{ description }}{% else %}{{ site.description }}{% endif %}" />
+<meta name="author" content="{{ site.author }}" />
+
+<!-- Open Graph tags -->
+<meta property="og:title" content="{% if title %}{{ title }} | {% endif %}{{ site.title }}" />
+<meta property="og:description" content="{% if description %}{{ description }}{% else %}{{ site.description }}{% endif %}" />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="{{ site.url }}{{ site.base_path }}{{ page.url }}" />
+<meta property="og:site_name" content="{{ site.title }}" />
+
+<!-- Twitter Card tags -->
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content="{% if title %}{{ title }} | {% endif %}{{ site.title }}" />
+<meta name="twitter:description" content="{% if description %}{{ description }}{% else %}{{ site.description }}{% endif %}" />
+
+<!-- Links -->
+<link rel="canonical" href="{{ site.url }}{{ site.base_path }}{{ page.url }}" />
+
+<!-- Plausible Analytics -->
+<script defer data-domain="vicentereig.github.io" src="https://plausible.io/js/script.js"></script>
+
+{% webpack_path css %}
