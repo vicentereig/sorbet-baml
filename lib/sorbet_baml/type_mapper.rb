@@ -17,10 +17,12 @@ module SorbetBaml
         map_simple_type(type_object.raw_type)
       when T::Types::TypedArray
         map_array_type(type_object)
+      when T::Types::TypedHash
+        map_hash_type(type_object)
       else
-        # Check if it's a union type (T.nilable)
+        # Check if it's a union type (T.nilable or T.any)
         if type_object.respond_to?(:types)
-          map_nilable_type(type_object)
+          map_union_type(type_object)
         else
           # Fallback for unknown types
           "unknown"
@@ -57,23 +59,58 @@ module SorbetBaml
     end
 
     sig { params(type_object: T.untyped).returns(String) }
-    def self.map_nilable_type(type_object)
-      # Extract the non-nil type from the union
+    def self.map_union_type(type_object)
       types = type_object.types
-      non_nil_type = types.find { |t| t.raw_type != NilClass }
+      nil_type = types.find { |t| t.raw_type == NilClass }
+      non_nil_types = types.reject { |t| t.raw_type == NilClass }
       
-      if non_nil_type
-        base_type = map_type(non_nil_type)
-        "#{base_type}?"
+      if non_nil_types.empty?
+        return "null"
+      end
+      
+      if non_nil_types.size == 1
+        # This is T.nilable(T) - single type with nil
+        base_type = map_type(non_nil_types.first)
+        return nil_type ? "#{base_type}?" : base_type
+      end
+      
+      # This is T.any with multiple types
+      mapped_types = non_nil_types.map { |t| map_type(t) }
+      
+      # Special case: TrueClass + FalseClass = bool
+      if mapped_types.sort == ["bool", "bool"]
+        union_string = "bool"
       else
-        "null"
+        # Remove duplicates and join
+        union_string = mapped_types.uniq.join(" | ")
+      end
+      
+      # If nil is present, wrap in parentheses and add ?
+      if nil_type
+        "(#{union_string})?"
+      else
+        union_string
       end
     end
 
     sig { params(type_object: T.untyped).returns(String) }
     def self.map_array_type(type_object)
       element_type = map_type(type_object.type)
-      "#{element_type}[]"
+      
+      # If element type contains union (|), wrap in parentheses for correct precedence
+      if element_type.include?("|")
+        "(#{element_type})[]"
+      else
+        "#{element_type}[]"
+      end
+    end
+
+    sig { params(type_object: T.untyped).returns(String) }
+    def self.map_hash_type(type_object)
+      # T::Types::TypedHash has keys and values methods
+      key_type = map_type(type_object.keys)
+      value_type = map_type(type_object.values)
+      "map<#{key_type}, #{value_type}>"
     end
   end
 end
