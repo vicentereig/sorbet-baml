@@ -29,23 +29,19 @@ module SorbetBaml
       @options = options
       @indent_size = T.let(options.fetch(:indent_size, 2), Integer)
       @include_descriptions = T.let(options.fetch(:include_descriptions, false), T::Boolean)
+      @include_dependencies = T.let(options.fetch(:include_dependencies, false), T::Boolean)
     end
 
     sig { params(klass: T.class_of(T::Struct)).returns(String) }
     def convert_struct(klass)
-      props = klass.props
-      
-      class_name = klass.name || klass.to_s
-      simple_name = class_name.split('::').last
-      lines = ["class #{simple_name} {"]
-      
-      props.each do |name, prop_info|
-        baml_type = TypeMapper.map_type(prop_info[:type_object])
-        lines << "#{' ' * @indent_size}#{name} #{baml_type}"
+      if @include_dependencies
+        # Get all dependencies in correct order and convert them all
+        dependencies = DependencyResolver.resolve_dependencies(klass)
+        dependencies.map { |dep_klass| convert_single_struct(dep_klass) }.join("\n\n")
+      else
+        # Just convert the single struct
+        convert_single_struct(klass)
       end
-      
-      lines << "}"
-      lines.join("\n")
     end
 
     sig { params(klass: T.class_of(T::Enum)).returns(String) }
@@ -59,6 +55,25 @@ module SorbetBaml
       enum_values.each do |enum_instance|
         value = enum_instance.serialize
         lines << "#{' ' * @indent_size}\"#{value}\""
+      end
+      
+      lines << "}"
+      lines.join("\n")
+    end
+
+    private
+
+    sig { params(klass: T.class_of(T::Struct)).returns(String) }
+    def convert_single_struct(klass)
+      props = klass.props
+      
+      class_name = klass.name || klass.to_s
+      simple_name = class_name.split('::').last
+      lines = ["class #{simple_name} {"]
+      
+      props.each do |name, prop_info|
+        baml_type = TypeMapper.map_type(prop_info[:type_object])
+        lines << "#{' ' * @indent_size}#{name} #{baml_type}"
       end
       
       lines << "}"

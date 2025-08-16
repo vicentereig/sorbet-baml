@@ -5,6 +5,7 @@ require "sorbet-runtime"
 require_relative "sorbet_baml/version"
 require_relative "sorbet_baml/converter"
 require_relative "sorbet_baml/type_mapper"
+require_relative "sorbet_baml/dependency_resolver"
 require_relative "sorbet_baml/struct_extensions"
 require_relative "sorbet_baml/enum_extensions"
 
