@@ -22,4 +22,8 @@
 <!-- Plausible Analytics -->
 <script defer data-domain="vicentereig.github.io" src="https://plausible.io/js/script.js"></script>
 
-<link rel="stylesheet" href="{{ '/_bridgetown/static/index.QMORYXZK.css' | relative_url }}">
+{% if site.base_path %}
+<link rel="stylesheet" href="{{ site.base_path }}/_bridgetown/static/index.QMORYXZK.css">
+{% else %}
+<link rel="stylesheet" href="/_bridgetown/static/index.QMORYXZK.css">
+{% endif %}

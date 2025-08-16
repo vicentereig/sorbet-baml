@@ -22,6 +22,10 @@
       </div>
     </footer>
     
-    <script src="{{ '/_bridgetown/static/index.6D7NEJEM.js' | relative_url }}"></script>
+    {% if site.base_path %}
+    <script src="{{ site.base_path }}/_bridgetown/static/index.6D7NEJEM.js"></script>
+    {% else %}
+    <script src="/_bridgetown/static/index.6D7NEJEM.js"></script>
+    {% endif %}
   </body>
 </html>
