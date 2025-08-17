@@ -8,7 +8,7 @@ module SorbetBaml
   class DSPyToolConverter
     extend T::Sig
 
-    sig { params(klass: T.class_of(DSPy::Tools::Base), options: T::Hash[Symbol, T.untyped]).returns(String) }
+    sig { params(klass: T.untyped, options: T::Hash[Symbol, T.untyped]).returns(String) }
     def self.from_dspy_tool(klass, options = {})
       new(options).convert_dspy_tool(klass)
     end
@@ -20,7 +20,7 @@ module SorbetBaml
       @include_descriptions = T.let(options.fetch(:include_descriptions, true), T::Boolean)
     end
 
-    sig { params(klass: T.class_of(DSPy::Tools::Base)).returns(String) }
+    sig { params(klass: T.untyped).returns(String) }
     def convert_dspy_tool(klass)
       # Extract tool metadata from DSPy tool
       tool_name = klass.tool_name_value || klass.name&.split('::')&.last

@@ -17,7 +17,7 @@ module SorbetBaml
     # Convert this DSPy tool to BAML tool definition with options
     sig { params(options: T::Hash[Symbol, T.untyped]).returns(String) }
     def baml_tool_definition(options = {})
-      SorbetBaml::DSPyToolConverter.from_dspy_tool(T.cast(self, T.class_of(DSPy::Tools::Base)), options)
+      SorbetBaml::DSPyToolConverter.from_dspy_tool(T.unsafe(self), options)
     end
   end
 end

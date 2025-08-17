@@ -47,7 +47,7 @@ module SorbetBaml
 
   # Convert a DSPy tool to BAML tool definition (only if DSPy is available)
   if defined?(DSPy::Tools::Base)
-    sig { params(klass: T.class_of(DSPy::Tools::Base), options: T::Hash[Symbol, T.untyped]).returns(String) }
+    sig { params(klass: T.untyped, options: T::Hash[Symbol, T.untyped]).returns(String) }
     def self.from_dspy_tool(klass, options = {})
       DSPyToolConverter.from_dspy_tool(klass, options)
     end
@@ -60,4 +60,6 @@ T::Struct.extend(SorbetBaml::ToolExtensions)
 T::Enum.extend(SorbetBaml::EnumExtensions)
 
 # Extend DSPy::Tools::Base with BAML conversion methods if DSPy is available
-DSPy::Tools::Base.extend(SorbetBaml::DSPyToolExtensions) if defined?(DSPy::Tools::Base)
+if defined?(DSPy::Tools::Base)
+  T.unsafe(eval('DSPy::Tools::Base')).extend(SorbetBaml::DSPyToolExtensions)
+end

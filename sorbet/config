@@ -4,3 +4,7 @@
 --ignore=vendor/
 --ignore=docs-site/
 --ignore=docs-output/
+--ignore=spec/
+--ignore=sorbet/rbi/gems/anthropic@1.5.0.rbi
+--ignore=sorbet/rbi/gems/openai@0.16.0.rbi
+--ignore=sorbet/rbi/gems/dspy@0.19.1.rbi
