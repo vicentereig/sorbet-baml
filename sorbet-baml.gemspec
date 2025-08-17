@@ -12,7 +12,7 @@ Gem::Specification.new do |spec|
   spec.description = 'A Ruby gem that converts T::Struct and T::Enum to BAML (Boundary AI Markup Language) type definitions. BAML uses 60% fewer tokens than JSON Schema while maintaining type safety.'
   spec.homepage = 'https://github.com/vicentereig/sorbet-baml'
   spec.license = 'MIT'
-  spec.required_ruby_version = '>= 3.2.0'
+  spec.required_ruby_version = '>= 3.3.0'
 
   spec.metadata['homepage_uri'] = spec.homepage
   spec.metadata['source_code_uri'] = 'https://github.com/vicentereig/sorbet-baml'
