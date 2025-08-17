@@ -1,4 +1,13 @@
 import "../styles/index.css"
+import Plausible from 'plausible-tracker'
+
+// Initialize Plausible Analytics
+const plausible = Plausible({
+  domain: 'vicentereig.github.io'
+})
+
+// Track page views automatically
+plausible.trackPageview()
 
 // Mobile menu toggle
 document.addEventListener('DOMContentLoaded', function() {

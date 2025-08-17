@@ -49,7 +49,7 @@ jobs:
       - name: Build frontend assets
         working-directory: docs-site
         run: |
-          npx esbuild frontend/javascript/index.js --bundle --outdir=output/_bridgetown/static --entry-names='index.[hash]'
+          node -e "const esbuild = require('esbuild'); const config = require('./esbuild.config.js'); esbuild.build({...config, metafile: true}).then(result => require('fs').writeFileSync('output/_bridgetown/manifest.json', JSON.stringify(result.metafile, null, 2))).catch(console.error)"
 
       - name: Build site
         working-directory: docs-site

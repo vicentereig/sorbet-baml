@@ -6,10 +6,13 @@
     "build": "bridgetown build"
   },
   "devDependencies": {
-    "esbuild": "^0.19.0",
-    "tailwindcss": "^3.3.0",
     "@tailwindcss/typography": "^0.5.0",
     "autoprefixer": "^10.4.0",
-    "postcss": "^8.4.0"
+    "esbuild": "^0.19.0",
+    "postcss": "^8.4.0",
+    "tailwindcss": "^3.3.0"
+  },
+  "dependencies": {
+    "plausible-tracker": "^0.3.9"
   }
 }

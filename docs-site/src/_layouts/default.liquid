@@ -22,10 +22,6 @@
       </div>
     </footer>
     
-    {% if site.base_path %}
-    <script src="{{ site.base_path }}/_bridgetown/static/index.6D7NEJEM.js"></script>
-    {% else %}
-    <script src="/_bridgetown/static/index.6D7NEJEM.js"></script>
-    {% endif %}
+    <script src="{% asset_path js %}" defer></script>
   </body>
 </html>
