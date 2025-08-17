@@ -401,7 +401,8 @@ This gem has reached **feature completeness** for core BAML conversion needs. Th
 
 - **v0.0.1** - Initial implementation with basic type support
 - **v0.1.0** - Complete type system + Ruby-idiomatic API + field descriptions + smart defaults
-- **v0.2.0** - Tool type definitions + DSPy integration + 80+ test cases + comprehensive documentation
+- **v0.2.0** - Description parameter support and enhanced field extraction
+- **v0.3.0** - Tool type definitions + DSPy integration + 80+ test cases + comprehensive documentation
 
 ## 🌟 Real-World Usage: Autonomous Research Agents
 
