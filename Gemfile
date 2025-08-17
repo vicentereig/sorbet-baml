@@ -7,7 +7,8 @@ gemspec
 
 # Development dependencies
 gem 'byebug', '~> 11.1'
-gem 'dspy', '~> 0.1', '>= 0.1.0'
+# Only include dspy for Ruby 3.3+ since it requires that version
+gem 'dspy', '~> 0.1', '>= 0.1.0' if RUBY_VERSION >= '3.3'
 gem 'irb'
 gem 'rake', '~> 13.0'
 gem 'rspec', '~> 3.13'
