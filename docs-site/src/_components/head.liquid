@@ -19,8 +19,4 @@
 <!-- Links -->
 <link rel="canonical" href="{{ site.url }}{{ site.base_path }}{{ page.url }}" />
 
-{% if site.base_path %}
-<link rel="stylesheet" href="{{ site.base_path }}/_bridgetown/static/index.QMORYXZK.css">
-{% else %}
-<link rel="stylesheet" href="/_bridgetown/static/index.QMORYXZK.css">
-{% endif %}
+<link rel="stylesheet" href="{% asset_path styles/index.css %}">
