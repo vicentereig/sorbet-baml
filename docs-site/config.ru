@@ -1,4 +1,4 @@
-require "bridgetown-core/rack/boot"
+require 'bridgetown-core/rack/boot'
 
 Bridgetown::Rack.boot
 

@@ -10,67 +10,63 @@ module SorbetBaml
     def self.extract_field_comments(klass)
       # First try to get descriptions from the description extractor (extra field)
       descriptions = DescriptionExtractor.extract_prop_descriptions(klass)
-      
+
       # Then fall back to comment-based extraction for any missing descriptions
       comments = {}
       source_file = find_source_file(klass)
-      
+
       if source_file && File.exist?(source_file)
         lines = File.readlines(source_file)
         extract_comments_from_lines(lines, T.must(T.must(klass.name).split('::').last), comments)
       end
-      
+
       # Merge with priority: description parameters > comments
-      descriptions.merge(comments) { |key, desc_param, comment| desc_param }
+      descriptions.merge(comments) { |_key, desc_param, _comment| desc_param }
     end
 
     sig { params(klass: T.class_of(T::Enum)).returns(T::Hash[String, T.nilable(String)]) }
     def self.extract_enum_comments(klass)
       comments = {}
       source_file = find_source_file(klass)
-      
+
       return comments unless source_file && File.exist?(source_file)
-      
+
       lines = File.readlines(source_file)
       extract_enum_comments_from_lines(lines, T.must(T.must(klass.name).split('::').last), comments)
-      
+
       comments
     end
-
-    private
 
     sig { params(klass: T::Class[T.anything]).returns(T.nilable(String)) }
     def self.find_source_file(klass)
       # Try to find where the class was defined
       # This is a heuristic approach since Ruby doesn't provide reliable source location for classes
-      
+
       # Method 1: Check if any methods have source location
       begin
         if klass.respond_to?(:new) && klass.method(:new).respond_to?(:source_location)
           location = klass.method(:new).source_location
           return location[0] if location
         end
-      rescue
+      rescue StandardError
         # Ignore errors
       end
-      
+
       # Method 2: Look at the current call stack for files that might contain the class
       caller_locations.each do |location|
         file_path = location.absolute_path || location.path
         next unless file_path && File.exist?(file_path)
-        
+
         # Read the file and check if it contains the class definition
         begin
           content = File.read(file_path)
           class_name = T.must(klass.name).split('::').last
-          if content.match(/class\s+#{Regexp.escape(T.must(class_name))}\s*</)
-            return file_path
-          end
-        rescue
+          return file_path if content.match(/class\s+#{Regexp.escape(T.must(class_name))}\s*</)
+        rescue StandardError
           # Ignore file read errors
         end
       end
-      
+
       nil
     end
 
@@ -79,28 +75,26 @@ module SorbetBaml
       in_target_class = T.let(false, T::Boolean)
       current_comment = T.let(nil, T.nilable(String))
       brace_depth = 0
-      
+
       lines.each do |line|
         stripped = line.strip
-        
+
         # Check if we're entering the target class
         if stripped.match(/^class\s+#{Regexp.escape(class_name)}\s*<\s*T::Struct/)
           in_target_class = true
           brace_depth = 0
           next
         end
-        
+
         next unless in_target_class
-        
+
         # Track brace depth to handle nested classes
         brace_depth += stripped.count('{')
         brace_depth -= stripped.count('}')
-        
+
         # Exit when we reach the end of the class
-        if stripped == 'end' && brace_depth == 0
-          break
-        end
-        
+        break if stripped == 'end' && brace_depth == 0
+
         # Extract comment
         if stripped.start_with?('#')
           comment_text = T.must(stripped[1..-1]).strip
@@ -121,37 +115,35 @@ module SorbetBaml
       in_target_class = T.let(false, T::Boolean)
       in_enums_block = T.let(false, T::Boolean)
       current_comment = T.let(nil, T.nilable(String))
-      
+
       lines.each do |line|
         stripped = line.strip
-        
+
         # Check if we're entering the target enum class
         if stripped.match(/^class\s+#{Regexp.escape(class_name)}\s*<\s*T::Enum/)
           in_target_class = true
           next
         end
-        
+
         next unless in_target_class
-        
+
         # Check if we're in the enums block
         if stripped == 'enums do'
           in_enums_block = true
           next
         end
-        
+
         # Exit enums block
         if in_enums_block && stripped == 'end'
           in_enums_block = false
           next
         end
-        
+
         # Exit class
-        if stripped == 'end' && !in_enums_block
-          break
-        end
-        
+        break if stripped == 'end' && !in_enums_block
+
         next unless in_enums_block
-        
+
         # Extract comment
         if stripped.start_with?('#')
           comment_text = T.must(stripped[1..-1]).strip

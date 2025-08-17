@@ -1,9 +1,8 @@
 # typed: strict
 # frozen_string_literal: true
 
-require "sorbet-runtime"
-require "set"
-require_relative "comment_extractor"
+require 'sorbet-runtime'
+require_relative 'comment_extractor'
 
 module SorbetBaml
   # Main converter class for transforming Sorbet types to BAML
@@ -18,29 +17,34 @@ module SorbetBaml
     sig { params(klasses: T::Array[T.class_of(T::Struct)], options: T::Hash[Symbol, T.untyped]).returns(String) }
     def self.from_structs(klasses, options = {})
       converter = new(options)
-      
+
       if converter.instance_variable_get(:@include_dependencies)
         # When dependencies are enabled, collect all unique dependencies and convert once
         all_dependencies = Set.new
         enum_dependencies = Set.new
-        
+
         klasses.each do |klass|
           deps = DependencyResolver.resolve_dependencies(klass)
           all_dependencies.merge(deps)
           enum_deps = converter.send(:find_enum_dependencies, deps)
           enum_dependencies.merge(enum_deps)
         end
-        
+
         # Convert all unique types
         converted_types = []
         enum_dependencies.each { |enum_klass| converted_types << converter.convert_enum(enum_klass) }
         all_dependencies.each { |struct_klass| converted_types << converter.send(:convert_single_struct, struct_klass) }
-        
+
         converted_types.join("\n\n")
       else
         # When dependencies are disabled, convert each struct individually
         klasses.map { |klass| converter.send(:convert_single_struct, klass) }.join("\n\n")
       end
+    end
+
+    sig { params(klass: T.class_of(T::Struct), options: T::Hash[Symbol, T.untyped]).returns(String) }
+    def self.from_tool(klass, options = {})
+      new(options).convert_tool(klass)
     end
 
     sig { params(klass: T.class_of(T::Enum), options: T::Hash[Symbol, T.untyped]).returns(String) }
@@ -61,15 +65,15 @@ module SorbetBaml
       if @include_dependencies
         # Get all dependencies in correct order and convert them all
         dependencies = DependencyResolver.resolve_dependencies(klass)
-        
+
         # Also find all enum dependencies
         enum_dependencies = find_enum_dependencies(dependencies)
-        
+
         # Convert enums first, then structs
         converted_types = []
         enum_dependencies.each { |enum_klass| converted_types << convert_enum(enum_klass) }
         dependencies.each { |dep_klass| converted_types << convert_single_struct(dep_klass) }
-        
+
         converted_types.join("\n\n")
       else
         # Just convert the single struct
@@ -82,15 +86,15 @@ module SorbetBaml
       class_name = klass.name || klass.to_s
       simple_name = class_name.split('::').last
       lines = ["enum #{simple_name} {"]
-      
+
       # Extract comments if requested
       comments = @include_descriptions ? CommentExtractor.extract_enum_comments(klass) : {}
-      
+
       # Get all enum values by calling values method
       enum_values = klass.values
       enum_values.each do |enum_instance|
         value = enum_instance.serialize
-        
+
         # Find the constant name for this value
         constant_name = T.let(nil, T.nilable(String))
         klass.constants.each do |const_name|
@@ -100,18 +104,48 @@ module SorbetBaml
             break
           end
         end
-        
+
         line = "#{' ' * @indent_size}\"#{value}\""
-        
+
         # Add description if available (BAML uses @description annotations, not comments)
         if @include_descriptions && constant_name && comments[constant_name]
           line += " @description(\"#{T.must(comments[constant_name]).gsub('"', '\\"')}\")"
         end
-        
+
         lines << line
       end
-      
-      lines << "}"
+
+      lines << '}'
+      lines.join("\n")
+    end
+
+    sig { params(klass: T.class_of(T::Struct)).returns(String) }
+    def convert_tool(klass)
+      # Tools generate BAML class definitions similar to structs but for tool specifications
+      # They can include action fields with @description annotations
+      props = klass.props
+
+      class_name = klass.name || klass.to_s
+      simple_name = class_name.split('::').last
+      lines = ["class #{simple_name} {"]
+
+      # Extract comments if requested
+      comments = @include_descriptions ? CommentExtractor.extract_field_comments(klass) : {}
+
+      props.each do |name, prop_info|
+        baml_type = TypeMapper.map_type(prop_info[:type_object])
+        line = "#{' ' * @indent_size}#{name} #{baml_type}"
+
+        # Add description if available (BAML uses @description annotations)
+        if @include_descriptions && comments[name.to_s]
+          escaped_comment = T.must(comments[name.to_s]).gsub('"', '\\"')
+          line += " @description(\"#{escaped_comment}\")"
+        end
+
+        lines << line
+      end
+
+      lines << '}'
       lines.join("\n")
     end
 
@@ -120,49 +154,49 @@ module SorbetBaml
     sig { params(klass: T.class_of(T::Struct)).returns(String) }
     def convert_single_struct(klass)
       props = klass.props
-      
+
       class_name = klass.name || klass.to_s
       simple_name = class_name.split('::').last
       lines = ["class #{simple_name} {"]
-      
+
       # Extract comments if requested
       comments = @include_descriptions ? CommentExtractor.extract_field_comments(klass) : {}
-      
+
       props.each do |name, prop_info|
         baml_type = TypeMapper.map_type(prop_info[:type_object])
         line = "#{' ' * @indent_size}#{name} #{baml_type}"
-        
+
         # Add description if available (BAML uses @description annotations)
         if @include_descriptions && comments[name.to_s]
           escaped_comment = T.must(comments[name.to_s]).gsub('"', '\\"')
           line += " @description(\"#{escaped_comment}\")"
         end
-        
+
         lines << line
       end
-      
-      lines << "}"
+
+      lines << '}'
       lines.join("\n")
     end
-    
+
     sig { params(struct_classes: T::Array[T.class_of(T::Struct)]).returns(T::Array[T.class_of(T::Enum)]) }
     def find_enum_dependencies(struct_classes)
       enum_deps = Set.new
-      
+
       struct_classes.each do |struct_klass|
         struct_klass.props.each do |_name, prop_info|
           type_object = prop_info[:type_object]
           enum_deps.merge(extract_enum_types(type_object))
         end
       end
-      
+
       enum_deps.to_a
     end
-    
+
     sig { params(type_object: T.untyped).returns(T::Array[T.class_of(T::Enum)]) }
     def extract_enum_types(type_object)
       return [] if type_object.nil?
-      
+
       case type_object
       when T::Types::Simple
         extract_enum_from_simple_type(type_object.raw_type)
@@ -182,7 +216,7 @@ module SorbetBaml
         end
       end
     end
-    
+
     sig { params(raw_type: T.untyped).returns(T::Array[T.class_of(T::Enum)]) }
     def extract_enum_from_simple_type(raw_type)
       # Check if this raw_type is a T::Enum subclass

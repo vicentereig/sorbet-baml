@@ -1,7 +1,7 @@
 # typed: strict
 # frozen_string_literal: true
 
-require "sorbet-runtime"
+require 'sorbet-runtime'
 
 module SorbetBaml
   # Extensions to add BAML conversion methods to T::Struct

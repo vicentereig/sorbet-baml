@@ -181,6 +181,146 @@ class Category {
 }
 ```
 
+## Tool Definitions
+
+Generate BAML tool specifications for agentic workflows, function calling, and structured LLM interactions:
+
+### T::Struct-based Tools
+
+```ruby
+# Define tool parameter structures for agent interactions
+class SearchTool < T::Struct
+  # The search query to execute
+  const :query, String
+  # Maximum number of results to return
+  const :limit, T.nilable(Integer)
+  # Optional filter criteria for search results
+  const :filters, T::Hash[String, String]
+end
+
+class FileWriteTool < T::Struct
+  # Path where the file should be written
+  const :file_path, String
+  # Content to write to the file
+  const :content, String
+  # Whether to overwrite existing file
+  const :overwrite, T::Boolean
+end
+
+# Generate BAML tool definitions
+SearchTool.to_baml_tool
+FileWriteTool.to_baml_tool
+
+# Module API also available
+SorbetBaml.from_tool(SearchTool)
+```
+
+**Generated BAML Tool Specifications:**
+```baml
+class SearchTool {
+  query string @description("The search query to execute")
+  limit int? @description("Maximum number of results to return")
+  filters map<string, string> @description("Optional filter criteria for search results")
+}
+
+class FileWriteTool {
+  file_path string @description("Path where the file should be written")
+  content string @description("Content to write to the file")
+  overwrite bool @description("Whether to overwrite existing file")
+}
+```
+
+### DSPy-style Tools (Optional)
+
+When `dspy.rb` is available, automatically convert DSPy tools with rich metadata:
+
+```ruby
+class CalculatorTool < DSPy::Tools::Base
+  extend T::Sig
+  
+  tool_name 'calculator'
+  tool_description 'Performs basic arithmetic operations with error handling'
+
+  sig { params(operation: String, num1: Float, num2: Float).returns(T.any(Float, String)) }
+  def call(operation:, num1:, num2:)
+    case operation.downcase
+    when 'add' then num1 + num2
+    when 'subtract' then num1 - num2
+    when 'multiply' then num1 * num2
+    when 'divide'
+      return "Error: Cannot divide by zero" if num2 == 0
+      num1 / num2
+    else
+      "Error: Unknown operation"
+    end
+  end
+end
+
+# Automatic extraction of tool metadata and parameter types
+CalculatorTool.to_baml
+# =>
+# // Performs basic arithmetic operations with error handling
+# class calculator {
+#   operation string @description("Parameter operation")
+#   num1 float @description("Parameter num1")
+#   num2 float @description("Parameter num2")
+# }
+```
+
+### Tool Collections for Agentic Workflows
+
+```ruby
+# Define a complete set of tools for a research agent
+RESEARCH_TOOLS = [
+  SearchTool,
+  FileWriteTool,
+  CalculatorTool
+].freeze
+
+# Generate complete tool specifications
+tool_specs = RESEARCH_TOOLS.map(&:to_baml_tool).join("\n\n")
+
+# Use in agent prompts
+def build_agent_prompt(task, tools_baml)
+  <<~PROMPT
+    You are a research agent with access to these tools:
+    
+    #{tools_baml}
+    
+    Task: #{task}
+    
+    Use the appropriate tools to complete this task efficiently.
+  PROMPT
+end
+
+prompt = build_agent_prompt("Research AI trends", tool_specs)
+```
+
+### Function Calling Integration
+
+Perfect for modern LLM function calling APIs:
+
+```ruby
+# OpenAI function calling with BAML tools
+tools = [SearchTool, FileWriteTool].map do |tool_class|
+  {
+    type: "function",
+    function: {
+      name: tool_class.name.downcase,
+      description: "#{tool_class.name} functionality",
+      parameters: tool_class.to_baml_tool
+    }
+  }
+end
+
+response = openai_client.chat(
+  model: "gpt-4",
+  messages: messages,
+  tools: tools,
+  tool_choice: "auto"
+)
+```
+
 ## Configuration Options
 
 ### Custom Indentation

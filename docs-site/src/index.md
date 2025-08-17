@@ -99,6 +99,11 @@ class User {
   </div>
   
   <div class="bg-white p-6 rounded-lg border border-gray-200">
+    <h3 class="font-semibold text-gray-900 mb-2">🛠️ Tool Definitions</h3>
+    <p class="text-gray-600">Generate BAML tool specifications for function calling and agentic workflows.</p>
+  </div>
+  
+  <div class="bg-white p-6 rounded-lg border border-gray-200">
     <h3 class="font-semibold text-gray-900 mb-2">🏁 Production Ready</h3>
     <p class="text-gray-600">Complete type support, dependency management, and comprehensive test coverage.</p>
   </div>

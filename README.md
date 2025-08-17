@@ -198,6 +198,113 @@ ResearchSubtask.to_baml
 
 **Why descriptions matter**: LLMs use field descriptions to understand context and generate more accurate, meaningful data. This is crucial for complex domains where field names alone aren't sufficient.
 
+## 🛠️ Tool Type Definitions
+
+Generate BAML tool specifications for agentic workflows, function calling, and structured LLM interactions:
+
+### T::Struct-based Tools
+
+```ruby
+class ReplyTool < T::Struct
+  # The response message to send back to the user
+  const :response, String
+end
+
+class SearchTool < T::Struct
+  # The search query to execute
+  const :query, String
+  # Maximum number of results to return
+  const :limit, T.nilable(Integer)
+end
+
+# Generate BAML tool definitions
+ReplyTool.to_baml_tool
+# =>
+# class ReplyTool {
+#   response string @description("The response message to send back to the user")
+# }
+
+SearchTool.to_baml_tool
+# =>
+# class SearchTool {
+#   query string @description("The search query to execute")
+#   limit int? @description("Maximum number of results to return")
+# }
+
+# Module API also available
+SorbetBaml.from_tool(ReplyTool)
+```
+
+### DSPy-style Tools (Optional)
+
+When `dspy.rb` is available, automatically convert DSPy tools with rich metadata:
+
+```ruby
+class CalculatorTool < DSPy::Tools::Base
+  extend T::Sig
+  
+  tool_name 'calculator'
+  tool_description 'Performs basic arithmetic operations'
+
+  sig { params(operation: String, num1: Float, num2: Float).returns(T.any(Float, String)) }
+  def call(operation:, num1:, num2:)
+    case operation.downcase
+    when 'add' then num1 + num2
+    when 'subtract' then num1 - num2
+    when 'multiply' then num1 * num2
+    when 'divide'
+      return "Error: Cannot divide by zero" if num2 == 0
+      num1 / num2
+    else
+      "Error: Unknown operation '#{operation}'. Use add, subtract, multiply, or divide"
+    end
+  end
+end
+
+# Automatic extraction of tool metadata and parameter types
+CalculatorTool.to_baml
+# =>
+# // Performs basic arithmetic operations
+# class calculator {
+#   operation string @description("Parameter operation")
+#   num1 float @description("Parameter num1")
+#   num2 float @description("Parameter num2")
+# }
+
+# Optional parameters handled correctly
+class SearchTool < DSPy::Tools::Base
+  extend T::Sig
+  
+  tool_name 'search'
+  tool_description 'Search for information'
+
+  sig { params(query: String, limit: T.nilable(Integer)).returns(T::Array[String]) }
+  def call(query:, limit: nil)
+    # Implementation...
+  end
+end
+
+SearchTool.to_baml
+# =>
+# // Search for information
+# class search {
+#   query string @description("Parameter query")
+#   limit int? @description("Parameter limit (optional)")
+# }
+
+# Module API also available
+SorbetBaml.from_dspy_tool(CalculatorTool)
+```
+
+**Tool Features:**
+- ✅ **T::Struct tools**: Convert any struct to BAML tool definition
+- ✅ **DSPy integration**: Automatic extraction from DSPy::Tools::Base classes
+- ✅ **Parameter types**: Full Sorbet type support (string, int, float, arrays, maps, etc.)
+- ✅ **Optional parameters**: Automatically detect and mark with `?`
+- ✅ **Descriptions**: Extract from comments (T::Struct) or automatic generation (DSPy)
+- ✅ **Tool metadata**: Names, descriptions, and parameter documentation
+- ✅ **Ruby-idiomatic**: `.to_baml_tool()` and `.to_baml()` methods
+
 ## 🎯 Complete Type Support
 
 ### ✅ Fully Supported
@@ -227,6 +334,8 @@ ResearchSubtask.to_baml
 ### 🚀 Advanced Features
 
 - **Ruby-idiomatic API**: Every T::Struct and T::Enum gets `.to_baml` method
+- **Tool definitions**: Generate BAML tool specs for function calling and agentic workflows
+- **DSPy integration**: Automatic tool conversion from DSPy::Tools::Base classes
 - **Smart defaults**: Field descriptions and dependencies included automatically
 - **Field descriptions**: Extracts comments from source code for LLM context
 - **Dependency management**: Automatically includes all referenced types
@@ -254,21 +363,25 @@ ResearchSubtask.to_baml
 
 ## 🏁 Production Ready
 
-This gem has reached **feature completeness** for core BAML conversion needs. The Ruby-idiomatic API is stable and thoroughly tested with **50+ test cases** covering all type combinations and edge cases.
+This gem has reached **feature completeness** for core BAML conversion needs. The Ruby-idiomatic API is stable and thoroughly tested with **80+ test cases** covering all type combinations, tool definitions, and edge cases.
 
 ### 📊 Quality Metrics
 
 - ✅ **100% Test Coverage** - All features comprehensively tested
 - ✅ **Full Sorbet Type Safety** - Zero type errors throughout codebase  
-- ✅ **50+ Test Cases** - Covering basic types, complex combinations, and edge cases
+- ✅ **80+ Test Cases** - Covering basic types, complex combinations, tool definitions, and edge cases
 - ✅ **TDD Development** - All features built test-first
 - ✅ **Field Descriptions** - Automatic comment extraction for LLM context
+- ✅ **Tool Definitions** - BAML tool specifications for function calling and agentic workflows
+- ✅ **DSPy Integration** - Automatic tool conversion from DSPy::Tools::Base classes
 - ✅ **Smart Defaults** - Dependencies and descriptions included by default
 - ✅ **Zero Breaking Changes** - Maintains backward compatibility
 
 ### ✅ Complete Feature Set
 
 - ✅ **Ruby-idiomatic API**: Every T::Struct and T::Enum gets `.to_baml` method
+- ✅ **Tool definitions**: Generate BAML tool specifications from T::Struct classes
+- ✅ **DSPy integration**: Automatic tool conversion from DSPy::Tools::Base classes
 - ✅ **Smart defaults**: Field descriptions and dependencies included automatically
 - ✅ **Field descriptions**: Extract documentation from comments for LLM context
 - ✅ **Dependency management**: Automatically includes all referenced types
@@ -277,6 +390,7 @@ This gem has reached **feature completeness** for core BAML conversion needs. Th
 
 ### 🗺️ Future Enhancements (Optional)
 
+- [ ] **DSPy-independent tool API**: Tools shouldn't require DSPy, just follow the same API pattern
 - [ ] **Type aliases**: `T.type_alias { String }` → `type Alias = string`
 - [ ] **Custom naming**: Convert between snake_case ↔ camelCase
 - [ ] **CLI tool**: `sorbet-baml convert MyStruct` command
@@ -287,6 +401,7 @@ This gem has reached **feature completeness** for core BAML conversion needs. Th
 
 - **v0.0.1** - Initial implementation with basic type support
 - **v0.1.0** - Complete type system + Ruby-idiomatic API + field descriptions + smart defaults
+- **v0.2.0** - Tool type definitions + DSPy integration + 80+ test cases + comprehensive documentation
 
 ## 🌟 Real-World Usage: Autonomous Research Agents
 

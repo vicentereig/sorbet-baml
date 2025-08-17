@@ -113,6 +113,56 @@ response = llm_client.chat(prompt)
 result = JSON.parse(response.content)
 ```
 
+### 5. Generate Tool Definitions
+
+Create BAML tool specifications for function calling and agentic workflows:
+
+```ruby
+# Define tool parameter structures
+class SearchTool < T::Struct
+  # The search query to execute
+  const :query, String
+  # Maximum number of results to return
+  const :limit, T.nilable(Integer)
+end
+
+class ReplyTool < T::Struct  
+  # The response message to send back to the user
+  const :response, String
+end
+
+# Generate BAML tool definitions
+SearchTool.to_baml_tool
+ReplyTool.to_baml_tool
+
+# Or use module API
+SorbetBaml.from_tool(SearchTool)
+```
+
+**Generated BAML Tool Specifications:**
+```baml
+class SearchTool {
+  query string @description("The search query to execute")
+  limit int? @description("Maximum number of results to return")
+}
+
+class ReplyTool {
+  response string @description("The response message to send back to the user")
+}
+```
+
+**Perfect for LLM function calling schemas:**
+```ruby
+tools = [SearchTool, ReplyTool].map(&:to_baml_tool).join("\n\n")
+
+prompt = <<~PROMPT
+  You have access to these tools:
+  #{tools}
+  
+  Use the appropriate tool to help the user with their request.
+PROMPT
+```
+
 ## Next Steps
 
 - [Type Mapping Reference](./type-mapping.md)
