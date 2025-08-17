@@ -147,7 +147,29 @@ SorbetBaml.from_structs([ResearchSynthesis, ResearchFindings])
 
 ## 🎯 Field Descriptions for LLM Context
 
-Add crucial context to your BAML types by documenting fields with comments - essential for autonomous agents and complex workflows:
+Add crucial context to your BAML types by documenting fields - essential for autonomous agents and complex workflows. The gem supports **two ways** to provide field descriptions:
+
+### Method 1: Comments (Traditional)
+```ruby
+class ResearchTask < T::Struct
+  # Clear description of the research objective
+  const :objective, String
+  # Strategic priority ranking (1-5 scale)
+  const :priority, Integer
+end
+```
+
+### Method 2: Description Parameter (New in v0.2.0+)
+```ruby
+class ResearchTask < T::Struct
+  const :objective, String, description: "Clear description of the research objective"
+  const :priority, Integer, description: "Strategic priority ranking (1-5 scale)"
+end
+```
+
+Both methods produce identical BAML output with `@description` annotations. The `description:` parameter provides a more explicit, Sorbet-native way to document fields.
+
+### Complete Example
 
 ```ruby
 class TaskType < T::Enum
@@ -211,10 +233,9 @@ class ReplyTool < T::Struct
 end
 
 class SearchTool < T::Struct
-  # The search query to execute
-  const :query, String
-  # Maximum number of results to return
-  const :limit, T.nilable(Integer)
+  # Using description: parameter (both methods work)
+  const :query, String, description: "The search query to execute"
+  const :limit, T.nilable(Integer), description: "Maximum number of results to return"
 end
 
 # Generate BAML tool definitions
@@ -301,7 +322,7 @@ SorbetBaml.from_dspy_tool(CalculatorTool)
 - ✅ **DSPy integration**: Automatic extraction from DSPy::Tools::Base classes
 - ✅ **Parameter types**: Full Sorbet type support (string, int, float, arrays, maps, etc.)
 - ✅ **Optional parameters**: Automatically detect and mark with `?`
-- ✅ **Descriptions**: Extract from comments (T::Struct) or automatic generation (DSPy)
+- ✅ **Descriptions**: Extract from comments or `description:` parameter (T::Struct) or automatic generation (DSPy)
 - ✅ **Tool metadata**: Names, descriptions, and parameter documentation
 - ✅ **Ruby-idiomatic**: `.to_baml_tool()` and `.to_baml()` methods
 
@@ -337,7 +358,7 @@ SorbetBaml.from_dspy_tool(CalculatorTool)
 - **Tool definitions**: Generate BAML tool specs for function calling and agentic workflows
 - **DSPy integration**: Automatic tool conversion from DSPy::Tools::Base classes
 - **Smart defaults**: Field descriptions and dependencies included automatically
-- **Field descriptions**: Extracts comments from source code for LLM context
+- **Field descriptions**: Extracts from comments or `description:` parameter for LLM context
 - **Dependency management**: Automatically includes all referenced types
 - **Proper ordering**: Dependencies are sorted topologically (no forward references needed)
 - **Circular reference handling**: Won't get stuck in infinite loops
@@ -383,7 +404,7 @@ This gem has reached **feature completeness** for core BAML conversion needs. Th
 - ✅ **Tool definitions**: Generate BAML tool specifications from T::Struct classes
 - ✅ **DSPy integration**: Automatic tool conversion from DSPy::Tools::Base classes
 - ✅ **Smart defaults**: Field descriptions and dependencies included automatically
-- ✅ **Field descriptions**: Extract documentation from comments for LLM context
+- ✅ **Field descriptions**: Extract documentation from comments or `description:` parameter for LLM context
 - ✅ **Dependency management**: Automatically includes all referenced types
 - ✅ **Proper ordering**: Dependencies are sorted topologically
 - ✅ **Type safety**: Full Sorbet type checking throughout
