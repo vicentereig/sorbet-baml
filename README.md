@@ -384,13 +384,13 @@ SorbetBaml.from_dspy_tool(CalculatorTool)
 
 ## 🏁 Production Ready
 
-This gem has reached **feature completeness** for core BAML conversion needs. The Ruby-idiomatic API is stable and thoroughly tested with **80+ test cases** covering all type combinations, tool definitions, and edge cases.
+This gem has reached **feature completeness** for core BAML conversion needs. The Ruby-idiomatic API is stable and thoroughly tested with **80 test cases** covering all type combinations, tool definitions, and edge cases.
 
 ### 📊 Quality Metrics
 
-- ✅ **100% Test Coverage** - All features comprehensively tested
+- ✅ **Comprehensive Test Coverage** - All features thoroughly tested
 - ✅ **Full Sorbet Type Safety** - Zero type errors throughout codebase  
-- ✅ **80+ Test Cases** - Covering basic types, complex combinations, tool definitions, and edge cases
+- ✅ **80 Test Cases** - Covering basic types, complex combinations, tool definitions, and edge cases
 - ✅ **TDD Development** - All features built test-first
 - ✅ **Field Descriptions** - Automatic comment extraction for LLM context
 - ✅ **Tool Definitions** - BAML tool specifications for function calling and agentic workflows
