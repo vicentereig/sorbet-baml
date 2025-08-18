@@ -53,6 +53,7 @@ jobs:
         run: |
           npm run frontend:build
           bundle exec bridgetown build --destination ../docs-output
+          cp -r output/_bridgetown ../docs-output/
           
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
