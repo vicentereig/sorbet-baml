@@ -41,7 +41,7 @@ yarn-error.log*
 lerna-debug.log*
 
 # Package lock files (keep only one)
-package-lock.json
+# package-lock.json
 
 # Ruby
 .bundle/

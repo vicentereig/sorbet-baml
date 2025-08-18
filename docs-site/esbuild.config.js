@@ -1,11 +1,17 @@
+const build = require("./config/esbuild.defaults.js")
+
+/**
+ * @typedef { import("esbuild").BuildOptions } BuildOptions
+ * @type {BuildOptions}
+ */
 const esbuildOptions = {
-  target: "es2020",
-  minify: process.argv.includes("--minify"),
-  bundle: true,
-  entryPoints: ["frontend/javascript/index.js"],
-  outdir: "output/_bridgetown/static",
-  entryNames: "index.[hash]",
   publicPath: "/sorbet-baml/_bridgetown/static",
+  plugins: [
+    // add new plugins here if needed...
+  ],
+  globOptions: {
+    excludeFilter: /\.(dsd|lit)\.css$/
+  }
 }
 
-module.exports = esbuildOptions
+build(esbuildOptions)

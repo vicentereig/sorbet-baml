@@ -46,16 +46,12 @@ jobs:
         id: pages
         uses: actions/configure-pages@v4
 
-      - name: Build frontend assets
-        working-directory: docs-site
-        run: |
-          node -e "const esbuild = require('esbuild'); const config = require('./esbuild.config.js'); esbuild.build({...config, metafile: true}).then(result => require('fs').writeFileSync('output/_bridgetown/manifest.json', JSON.stringify(result.metafile, null, 2))).catch(console.error)"
-
-      - name: Build site
+      - name: Build site with assets
         working-directory: docs-site
         env:
           BRIDGETOWN_ENV: production
         run: |
+          npm run frontend:build
           bundle exec bridgetown build --destination ../docs-output
           
       - name: Upload artifact
