@@ -4,37 +4,17 @@ title: "sorbet-baml"
 description: "Ruby-idiomatic conversion from Sorbet types to BAML for efficient LLM prompting. 60% fewer tokens than JSON Schema while maintaining complete type information."
 ---
 
-<div class="prose prose-lg max-w-none" markdown="1">
+**sorbet-baml** converts your Sorbet types to BAML (Boundary AI Markup Language) with a simple, Ruby-idiomatic API.
 
-Something happened to schema generation.
+BAML is a more efficient alternative to JSON Schema for LLM prompting - it uses about 60% fewer tokens while maintaining complete type information.
 
-You used to define your types **once**, convert them, and use them efficiently. Whether for validation, documentation, or LLM prompting, it felt straightforward. And it was.
+## Features
 
-Today, most type conversion is verbose and inefficient. JSON Schema bloats your prompts with unnecessary metadata. Every field needs explicit definitions. Token counts skyrocket, and your LLM interactions become expensive.
-
-Add up your API costs from verbose schemas last month. You should own more efficient tooling by now.
-
-JSON Schema still makes sense for many use cases, but BAML's grip will tighten. Type conversion used to be hopelessly verbose, but modern markup is simpler now and vastly improved. Plus, developers are hungry to optimize their LLM costs again, tired of being subservient to token-heavy schemas.
-
-**Once** upon a time you defined your types efficiently, you controlled your token usage, and your prompting performance was your own business. We think it's that time again.
-
-Introducing **sorbet-baml**, Ruby-idiomatic BAML generation from [Sorbet](https://sorbet.org) types.
-
-</div>
-
-<ul class="list-dash my-8">
-  <li>Define once, convert efficiently.</li>
-  <li>60% fewer tokens than JSON Schema.</li>
-  <li>Ruby-idiomatic API with natural `.to_baml` methods.</li>
-  <li>Simple and straightforward, not enterprisey and bloated.</li>
-  <li>For better LLM performance.</li>
-</ul>
-
-So far there's one **sorbet-baml** gem:
-
-<ul class="list-dash my-8">
-  <li>**sorbet-baml:** Ruby-idiomatic conversion from Sorbet types to BAML.</li>
-</ul>
+- **Ruby-idiomatic API**: Every `T::Struct` and `T::Enum` gets a `.to_baml` method
+- **Efficient output**: ~60% fewer tokens than equivalent JSON Schema
+- **Smart defaults**: Includes field descriptions and dependencies automatically  
+- **Type-safe**: Full Sorbet compatibility with comprehensive test coverage
+- **Dependency resolution**: Handles nested types with topological sorting
 
 <div class="flex flex-wrap gap-4 my-8">
   <a href="/getting-started/" class="btn-primary">
@@ -97,44 +77,6 @@ class User {
 }
 ```
 
-## Key Features
-
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 my-8">
-  <div class="card-once">
-    <h3 class="font-semibold text-once-black mb-2">Ruby-Idiomatic API</h3>
-    <p class="text-once-gray-600">Every T::Struct and T::Enum gets a natural `.to_baml` method that feels native to Ruby.</p>
-  </div>
-  
-  <div class="card-once">
-    <h3 class="font-semibold text-once-black mb-2">Smart Defaults</h3>
-    <p class="text-once-gray-600">Field descriptions and dependencies included automatically for better LLM understanding.</p>
-  </div>
-  
-  <div class="card-once">
-    <h3 class="font-semibold text-once-black mb-2">Field Descriptions</h3>
-    <p class="text-once-gray-600">Extracts comments from source code to provide crucial context for autonomous agents.</p>
-  </div>
-  
-  <div class="card-once">
-    <h3 class="font-semibold text-once-black mb-2">Dependency Management</h3>
-    <p class="text-once-gray-600">Automatically includes all referenced types with proper topological sorting.</p>
-  </div>
-  
-  <div class="card-once">
-    <h3 class="font-semibold text-once-black mb-2">Type-Safe</h3>
-    <p class="text-once-gray-600">Full Sorbet type checking throughout the gem with 100% test coverage.</p>
-  </div>
-  
-  <div class="card-once">
-    <h3 class="font-semibold text-once-black mb-2">Tool Definitions</h3>
-    <p class="text-once-gray-600">Generate BAML tool specifications for function calling and agentic workflows.</p>
-  </div>
-  
-  <div class="card-once">
-    <h3 class="font-semibold text-once-black mb-2">Production Ready</h3>
-    <p class="text-once-gray-600">Complete type support, dependency management, and comprehensive test coverage.</p>
-  </div>
-</div>
 
 ## Complete Type Support
 
@@ -226,32 +168,23 @@ class User {
   </div>
 </div>
 
-## Perfect for Agentic Workflows
+## Usage in LLM Prompts
 
 ```ruby
-# Define your autonomous research workflow types
+# Define your types
 class TaskDecomposition < T::Struct
-  # The main research topic being investigated
   const :research_topic, String
-  # Target complexity level for the decomposition
   const :complexity_level, ComplexityLevel
-  # Autonomously generated list of research subtasks
   const :subtasks, T::Array[String]
 end
 
-# Generate BAML for LLM agents
+# Include BAML schema in prompts
 prompt = <<~PROMPT
-  You are an autonomous research agent. Analyze this topic and decompose it.
+  Analyze this topic and decompose it into subtasks.
   
-  Schema for your output:
+  Return your response in this format:
   #{TaskDecomposition.to_baml}
-  
-  Topic: "Impact of AI on healthcare delivery systems"
 PROMPT
-
-# Use with any LLM provider
-response = llm_client.chat(prompt)
-result = TaskDecomposition.from_json(response.content)
 ```
 
 ## Installation
@@ -268,11 +201,3 @@ Or install directly:
 gem install sorbet-baml
 ```
 
----
-
-<div class="text-center mt-16">
-  <h2 class="text-2xl font-bold text-once-black mb-4">Ready to get started?</h2>
-  <a href="/getting-started/" class="btn-primary">
-    Read the Getting Started Guide →
-  </a>
-</div>
