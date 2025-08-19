@@ -24,11 +24,11 @@
 
 @layer components {
   .nav-link {
-    @apply text-once-blue-600 hover:text-once-blue-800 font-medium text-base transition-colors duration-150 font-sans;
+    @apply text-blue-600 hover:text-blue-800 font-medium text-base transition-colors duration-150 font-sans;
   }
   
   .nav-link.active {
-    @apply text-once-blue-900;
+    @apply text-blue-900;
   }
   
   /* Once.com-inspired dashed list */
@@ -42,44 +42,53 @@
   
   .list-dash li::before {
     content: "–";
-    @apply text-once-blue-300 mr-3 flex-shrink-0;
+    @apply text-blue-300 mr-3 flex-shrink-0;
   }
   
-  /* Link styles following Once.com pattern */
+  /* Link styles following Once.com pattern with animated underline */
   .link-once {
-    @apply text-once-blue-600 underline underline-offset-2 hover:text-once-blue-800 transition-colors duration-150;
+    @apply text-blue-600 hover:text-blue-800 transition-colors duration-150 relative;
+  }
+  
+  .link-once::after {
+    content: '';
+    @apply absolute left-0 bottom-0 w-full h-px bg-blue-600 transform scale-x-0 transition-transform duration-200 origin-left;
+  }
+  
+  .link-once:hover::after {
+    @apply scale-x-100;
   }
   
   /* Button styles */
   .btn-primary {
-    @apply inline-flex items-center justify-center px-6 py-3 font-sans text-base font-medium text-white bg-once-blue-600 hover:bg-once-blue-700 rounded-md transition-colors duration-150;
+    @apply inline-flex items-center justify-center px-6 py-3 font-sans text-base font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md transition-colors duration-150;
   }
   
   .btn-secondary {
-    @apply inline-flex items-center justify-center px-6 py-3 font-sans text-base font-medium text-once-blue-700 bg-white hover:bg-once-blue-50 border border-once-blue-200 rounded-md transition-colors duration-150;
+    @apply inline-flex items-center justify-center px-6 py-3 font-sans text-base font-medium text-blue-700 bg-white hover:bg-blue-50 border border-blue-200 rounded-md transition-colors duration-150;
   }
   
   /* Card styles */
   .card-once {
-    @apply bg-white border border-once-blue-100 rounded-lg p-6 hover:border-once-blue-200 transition-colors duration-150;
+    @apply bg-white border border-blue-100 rounded-lg p-6 hover:border-blue-200 transition-colors duration-150;
   }
   
   /* Code styling */
   .prose code {
-    @apply text-sm bg-once-blue-50 text-once-blue-900 px-1 py-0.5 rounded font-mono;
+    @apply text-sm bg-blue-50 text-blue-900 px-1 py-0.5 rounded font-mono;
   }
   
   .prose pre {
-    @apply bg-once-gray-900 text-once-blue-100 rounded-lg;
+    @apply bg-gray-900 text-blue-100 rounded-lg;
   }
   
   .prose pre code {
-    @apply text-once-blue-100 bg-transparent p-0 font-mono;
+    @apply text-blue-100 bg-transparent p-0 font-mono;
   }
   
   /* Signature section */
   .signature {
-    @apply mt-12 pt-8 border-t border-once-blue-200;
+    @apply mt-12 pt-8 border-t border-blue-200;
   }
   
   .signature figure {
@@ -91,15 +100,15 @@
   }
   
   .signature dt {
-    @apply font-semibold text-once-blue-900 font-sans;
+    @apply font-semibold text-blue-900 font-sans;
   }
   
   .signature dd {
-    @apply text-once-blue-700 text-sm font-sans;
+    @apply text-blue-700 text-sm font-sans;
   }
   
   .signature dd a {
-    @apply text-once-blue-600 underline underline-offset-2 hover:text-once-blue-800;
+    @apply text-blue-600 underline underline-offset-2 hover:text-blue-800;
   }
 }
 

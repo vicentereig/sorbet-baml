@@ -1,0 +1,86 @@
+{
+  "inputs": {
+    "frontend/styles/index.css": {
+      "bytes": 1213,
+      "imports": []
+    },
+    "node_modules/plausible-tracker/build/module/lib/request.js": {
+      "bytes": 3277,
+      "imports": [],
+      "format": "esm"
+    },
+    "node_modules/plausible-tracker/build/module/lib/tracker.js": {
+      "bytes": 10591,
+      "imports": [
+        {
+          "path": "node_modules/plausible-tracker/build/module/lib/request.js",
+          "kind": "import-statement",
+          "original": "./request"
+        }
+      ],
+      "format": "esm"
+    },
+    "node_modules/plausible-tracker/build/module/index.js": {
+      "bytes": 323,
+      "imports": [
+        {
+          "path": "node_modules/plausible-tracker/build/module/lib/tracker.js",
+          "kind": "import-statement",
+          "original": "./lib/tracker"
+        }
+      ],
+      "format": "esm"
+    },
+    "frontend/javascript/index.js": {
+      "bytes": 614,
+      "imports": [
+        {
+          "path": "frontend/styles/index.css",
+          "kind": "import-statement",
+          "original": "../styles/index.css"
+        },
+        {
+          "path": "node_modules/plausible-tracker/build/module/index.js",
+          "kind": "import-statement",
+          "original": "plausible-tracker"
+        }
+      ],
+      "format": "esm"
+    }
+  },
+  "outputs": {
+    "output/_bridgetown/static/index.Q577D7E6.js": {
+      "imports": [],
+      "exports": [],
+      "entryPoint": "frontend/javascript/index.js",
+      "cssBundle": "output/_bridgetown/static/index.HQI6RT56.css",
+      "inputs": {
+        "frontend/styles/index.css": {
+          "bytesInOutput": 0
+        },
+        "node_modules/plausible-tracker/build/module/lib/request.js": {
+          "bytesInOutput": 1117
+        },
+        "node_modules/plausible-tracker/build/module/lib/tracker.js": {
+          "bytesInOutput": 3200
+        },
+        "node_modules/plausible-tracker/build/module/index.js": {
+          "bytesInOutput": 32
+        },
+        "frontend/javascript/index.js": {
+          "bytesInOutput": 453
+        }
+      },
+      "bytes": 5017
+    },
+    "output/_bridgetown/static/index.HQI6RT56.css": {
+      "imports": [],
+      "inputs": {
+        "frontend/styles/index.css": {
+          "bytesInOutput": 1139
+        }
+      },
+      "bytes": 1171
+    }
+  }
+}

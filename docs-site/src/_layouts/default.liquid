@@ -3,30 +3,30 @@
   <head>
     {% render "head", title: title, description: description %}
   </head>
-  <body class="bg-white min-h-screen font-serif">
+  <body class="bg-blue-50 min-h-screen font-serif">
     {% render "nav" %}
     
     <main class="min-h-screen">
-      <div class="max-w-prose-wide mx-auto px-6 py-16 sm:py-24">
+      <div class="max-w-3xl mx-auto px-6 py-16 sm:py-24" style="max-width: 75ch;">
         {{ content }}
       </div>
     </main>
     
-    <footer class="bg-once-blue-50 border-t border-once-blue-200">
-      <div class="max-w-prose-wide mx-auto px-6 py-8">
-        <div class="signature">
-          <dl>
-            <dt>Vicente Reig</dt>
-            <dd>Ruby & LLM Engineer</dd>
-            <dd>
-              <a href="mailto:hey@vicente.services">hey@vicente.services</a>
+    <footer class="bg-blue-100 border-t border-blue-200">
+      <div class="max-w-3xl mx-auto px-6 py-8" style="max-width: 75ch;">
+        <div class="mt-12 pt-8 border-t border-blue-200">
+          <dl class="space-y-1">
+            <dt class="font-semibold text-blue-900 font-sans"><a href="https://vicente.services" class="text-blue-600 hover:text-blue-800 transition-colors duration-150">Vicente Reig</a></dt>
+            <dd class="text-blue-700 text-sm font-sans">Fractional Engineering Lead</dd>
+            <dd class="text-blue-700 text-sm font-sans">
+              <a href="mailto:hey@vicente.services" class="text-blue-600 hover:text-blue-800 transition-colors duration-150">hey@vicente.services</a>
             </dd>
           </dl>
-          <div class="mt-4 text-center text-once-gray-600 text-sm">
+          <div class="mt-4 text-center text-blue-700 text-sm">
             <p>&copy; 2025 Vicente Reig. MIT License.</p>
             <p class="mt-2">
-              <a href="https://github.com/vicentereig/sorbet-baml" class="link-once">GitHub</a> •
-              <a href="https://rubygems.org/gems/sorbet-baml" class="link-once">RubyGems</a>
+              <a href="https://github.com/vicentereig/sorbet-baml" class="text-blue-600 hover:text-blue-800 transition-colors duration-150">GitHub</a> •
+              <a href="https://rubygems.org/gems/sorbet-baml" class="text-blue-600 hover:text-blue-800 transition-colors duration-150">RubyGems</a>
             </p>
           </div>
         </div>

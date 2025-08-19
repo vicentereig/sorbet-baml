@@ -2,7 +2,16 @@
 module.exports = {
   content: [
     "./src/**/*.{html,md,liquid,erb}",
-    "./frontend/**/*.js",
+    "./frontend/**/*.{js,css}",
+    "./src/_components/**/*.liquid",
+    "./src/_layouts/**/*.liquid",
+  ],
+  safelist: [
+    // Always include our custom colors
+    {
+      pattern: /once-(blue|gray)-(50|100|200|300|400|500|600|700|800|900|950)/,
+    },
+    'max-w-prose-wide',
   ],
   darkMode: 'media',
   theme: {

@@ -1,22 +1,22 @@
-<title>{% if title %}{{ title }} | {% endif %}{{ site.title }}</title>
+<title>{% if title %}{{ title }} | {% endif %}sorbet-baml</title>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<meta name="description" content="{% if description %}{{ description }}{% else %}{{ site.description }}{% endif %}" />
-<meta name="author" content="{{ site.author }}" />
+<meta name="description" content="{% if description %}{{ description }}{% else %}Ruby-idiomatic conversion from Sorbet types to BAML for efficient LLM prompting{% endif %}" />
+<meta name="author" content="Vicente Reig" />
 
 <!-- Open Graph tags -->
-<meta property="og:title" content="{% if title %}{{ title }} | {% endif %}{{ site.title }}" />
-<meta property="og:description" content="{% if description %}{{ description }}{% else %}{{ site.description }}{% endif %}" />
+<meta property="og:title" content="{% if title %}{{ title }} | {% endif %}sorbet-baml" />
+<meta property="og:description" content="{% if description %}{{ description }}{% else %}Ruby-idiomatic conversion from Sorbet types to BAML for efficient LLM prompting{% endif %}" />
 <meta property="og:type" content="website" />
-<meta property="og:url" content="{{ site.url }}{{ site.base_path }}{{ page.url }}" />
-<meta property="og:site_name" content="{{ site.title }}" />
+<meta property="og:url" content="https://vicentereig.github.io/sorbet-baml{% if page.url %}{{ page.url }}{% endif %}" />
+<meta property="og:site_name" content="sorbet-baml" />
 
 <!-- Twitter Card tags -->
 <meta name="twitter:card" content="summary" />
-<meta name="twitter:title" content="{% if title %}{{ title }} | {% endif %}{{ site.title }}" />
-<meta name="twitter:description" content="{% if description %}{{ description }}{% else %}{{ site.description }}{% endif %}" />
+<meta name="twitter:title" content="{% if title %}{{ title }} | {% endif %}sorbet-baml" />
+<meta name="twitter:description" content="{% if description %}{{ description }}{% else %}Ruby-idiomatic conversion from Sorbet types to BAML for efficient LLM prompting{% endif %}" />
 
 <!-- Links -->
-<link rel="canonical" href="{{ site.url }}{{ site.base_path }}{{ page.url }}" />
+<link rel="canonical" href="https://vicentereig.github.io/sorbet-baml{% if page.url %}{{ page.url }}{% endif %}" />
 
 <link rel="stylesheet" href="{% asset_path styles/index.css %}">
