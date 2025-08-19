@@ -1,23 +1,34 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" class="antialiased">
   <head>
     {% render "head", title: title, description: description %}
   </head>
-  <body class="bg-gray-50 min-h-screen">
+  <body class="bg-white min-h-screen font-system">
     {% render "nav" %}
     
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      {{ content }}
+    <main class="min-h-screen">
+      <div class="max-w-prose mx-auto px-6 py-16 sm:py-24">
+        {{ content }}
+      </div>
     </main>
     
-    <footer class="bg-white border-t border-gray-200 mt-16">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div class="text-center text-gray-600">
-          <p>&copy; 2025 <a href="mailto:hey@vicente.services" class="text-blue-600 hover:text-blue-800">Vicente Reig</a>. MIT License.</p>
-          <p class="mt-2">
-            <a href="https://github.com/vicentereig/sorbet-baml" class="text-blue-600 hover:text-blue-800">GitHub</a> •
-            <a href="https://rubygems.org/gems/sorbet-baml" class="text-blue-600 hover:text-blue-800">RubyGems</a>
-          </p>
+    <footer class="bg-once-gray-50 border-t border-once-gray-200">
+      <div class="max-w-prose mx-auto px-6 py-8">
+        <div class="signature">
+          <dl>
+            <dt>Vicente Reig</dt>
+            <dd>Ruby & LLM Engineer</dd>
+            <dd>
+              <a href="mailto:hey@vicente.services">hey@vicente.services</a>
+            </dd>
+          </dl>
+          <div class="mt-4 text-center text-once-gray-600 text-sm">
+            <p>&copy; 2025 Vicente Reig. MIT License.</p>
+            <p class="mt-2">
+              <a href="https://github.com/vicentereig/sorbet-baml" class="link-once">GitHub</a> •
+              <a href="https://rubygems.org/gems/sorbet-baml" class="link-once">RubyGems</a>
+            </p>
+          </div>
         </div>
       </div>
     </footer>

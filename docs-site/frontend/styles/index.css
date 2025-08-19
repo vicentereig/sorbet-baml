@@ -4,58 +4,115 @@
 
 @layer base {
   html {
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   }
   
   body {
-    line-height: 1.6;
-    color: #374151;
+    line-height: 1.625;
+    color: #171717;
+    background-color: #ffffff;
   }
   
   h1, h2, h3, h4, h5, h6 {
     font-weight: 600;
     line-height: 1.25;
+    color: #000000;
   }
 }
 
 @layer components {
   .nav-link {
-    @apply block px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded-md transition-colors;
+    @apply text-once-gray-600 hover:text-once-gray-900 font-medium text-base transition-colors duration-150;
   }
   
   .nav-link.active {
-    @apply text-blue-600 bg-blue-50;
+    @apply text-once-gray-900;
   }
   
-  .code-block {
-    @apply bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto;
+  /* Once.com-inspired dashed list */
+  .list-dash {
+    @apply list-none space-y-3;
   }
   
+  .list-dash li {
+    @apply flex items-start;
+  }
+  
+  .list-dash li::before {
+    content: "–";
+    @apply text-once-gray-400 mr-3 flex-shrink-0;
+  }
+  
+  /* Link styles following Once.com pattern */
+  .link-once {
+    @apply text-once-gray-900 underline underline-offset-2 hover:text-once-gray-700 transition-colors duration-150;
+  }
+  
+  /* Button styles */
+  .btn-primary {
+    @apply inline-flex items-center justify-center px-6 py-3 font-system text-base font-medium text-white bg-once-gray-900 hover:bg-once-gray-800 rounded-md transition-colors duration-150;
+  }
+  
+  .btn-secondary {
+    @apply inline-flex items-center justify-center px-6 py-3 font-system text-base font-medium text-once-gray-700 bg-white hover:bg-once-gray-50 border border-once-gray-300 rounded-md transition-colors duration-150;
+  }
+  
+  /* Card styles */
+  .card-once {
+    @apply bg-white border border-once-gray-200 rounded-lg p-6 hover:border-once-gray-300 transition-colors duration-150;
+  }
+  
+  /* Code styling */
   .prose code {
-    @apply text-sm;
+    @apply text-sm bg-once-gray-100 text-once-gray-900 px-1 py-0.5 rounded;
   }
   
   .prose pre {
-    @apply bg-gray-900 text-gray-100;
+    @apply bg-once-gray-900 text-once-gray-100 rounded-lg;
   }
   
   .prose pre code {
-    @apply text-gray-100;
+    @apply text-once-gray-100 bg-transparent p-0;
+  }
+  
+  /* Signature section */
+  .signature {
+    @apply mt-12 pt-8 border-t border-once-gray-200;
+  }
+  
+  .signature figure {
+    @apply mb-4;
+  }
+  
+  .signature dl {
+    @apply space-y-1;
+  }
+  
+  .signature dt {
+    @apply font-semibold text-once-gray-900;
+  }
+  
+  .signature dd {
+    @apply text-once-gray-600 text-sm;
+  }
+  
+  .signature dd a {
+    @apply text-once-gray-600 underline underline-offset-2 hover:text-once-gray-900;
   }
 }
 
-/* Syntax highlighting */
+/* Syntax highlighting with Once.com-inspired colors */
 .highlight {
   @apply rounded-lg;
 }
 
 .highlight pre {
-  @apply m-0 p-4 bg-gray-900 text-gray-100 overflow-x-auto;
+  @apply m-0 p-4 bg-once-gray-900 text-once-gray-100 overflow-x-auto;
 }
 
 .highlight .k { color: #c678dd; } /* Keyword */
 .highlight .s { color: #98c379; } /* String */
-.highlight .c { color: #5c6370; } /* Comment */
+.highlight .c { color: #737373; } /* Comment */
 .highlight .n { color: #e06c75; } /* Name */
 .highlight .nb { color: #61afef; } /* Builtin */
 .highlight .nf { color: #61afef; } /* Function */

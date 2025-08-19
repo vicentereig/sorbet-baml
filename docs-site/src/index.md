@@ -4,44 +4,71 @@ title: "sorbet-baml"
 description: "Ruby-idiomatic conversion from Sorbet types to BAML for efficient LLM prompting. 60% fewer tokens than JSON Schema while maintaining complete type information."
 ---
 
-<div class="text-center mb-12">
-  <h1 class="text-4xl font-bold text-gray-900 mb-4">sorbet-baml</h1>
-  <p class="text-xl text-gray-600 max-w-3xl mx-auto">
-    Ruby-idiomatic conversion from Sorbet types to BAML (Boundary AI Markup Language) for efficient LLM prompting.
-  </p>
-  
-  <div class="flex flex-wrap justify-center gap-4 mt-8">
-    <img src="https://img.shields.io/gem/v/sorbet-baml" alt="Gem Version" />
-    <img src="https://img.shields.io/gem/dt/sorbet-baml" alt="Total Downloads" />
-    <img src="https://img.shields.io/github/license/vicentereig/sorbet-baml" alt="License" />
-    <img src="https://img.shields.io/badge/Sorbet-compatible-blue" alt="Sorbet Compatible" />
-  </div>
-  
-  <div class="flex flex-wrap justify-center gap-4 mt-6">
-    <a href="/sorbet-baml/getting-started/" class="bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors">
-      Get Started
-    </a>
-    <a href="https://github.com/vicentereig/sorbet-baml" class="bg-gray-100 text-gray-700 px-6 py-3 rounded-lg font-medium hover:bg-gray-200 transition-colors">
-      View on GitHub
-    </a>
-  </div>
+<div class="prose prose-lg max-w-none">
+
+<p>Something happened to schema generation.</p>
+
+<p>You used to define your types **once**, convert them, and use them efficiently. Whether for validation, documentation, or LLM prompting, it felt straightforward. And it was.</p>
+
+<p>Today, most type conversion is verbose and inefficient. JSON Schema bloats your prompts with unnecessary metadata. Every field needs explicit definitions. Token counts skyrocket, and your LLM interactions become expensive.</p>
+
+<p>Add up your API costs from verbose schemas last month. You should own more efficient tooling by now.</p>
+
+<p>JSON Schema still makes sense for many use cases, but BAML's grip will tighten. Type conversion used to be hopelessly verbose, but modern markup is simpler now and vastly improved. Plus, developers are hungry to optimize their LLM costs again, tired of being subservient to token-heavy schemas.</p>
+
+<p>**Once** upon a time you defined your types efficiently, you controlled your token usage, and your prompting performance was your own business. We think it's that time again.</p>
+
+<p>Introducing **sorbet-baml**, Ruby-idiomatic BAML generation from [Sorbet](https://sorbet.org) types.</p>
+
+<ul class="list-dash my-8">
+  <li>Define once, convert efficiently.</li>
+  <li>60% fewer tokens than JSON Schema.</li>
+  <li>Ruby-idiomatic API with natural `.to_baml` methods.</li>
+  <li>Simple and straightforward, not enterprisey and bloated.</li>
+  <li>For better LLM performance.</li>
+</ul>
+
+<p>So far there's one **sorbet-baml** gem:</p>
+
+<ul class="list-dash my-8">
+  <li>**sorbet-baml:** Ruby-idiomatic conversion from Sorbet types to BAML.</li>
+</ul>
+
+<div class="flex flex-wrap gap-4 my-8">
+  <a href="/getting-started/" class="btn-primary">
+    Get Started →
+  </a>
+  <a href="https://github.com/vicentereig/sorbet-baml" class="btn-secondary">
+    View on GitHub
+  </a>
+</div>
+
+<div class="flex flex-wrap justify-center gap-4 my-6">
+  <img src="https://img.shields.io/gem/v/sorbet-baml" alt="Gem Version" />
+  <img src="https://img.shields.io/gem/dt/sorbet-baml" alt="Total Downloads" />
+  <img src="https://img.shields.io/github/license/vicentereig/sorbet-baml" alt="License" />
+  <img src="https://img.shields.io/badge/Sorbet-compatible-blue" alt="Sorbet Compatible" />
+</div>
+
 </div>
 
 ## Why BAML?
 
 BAML uses approximately **60% fewer tokens** than JSON Schema while maintaining complete type information, making your LLM interactions more efficient and cost-effective.
 
-<div class="bg-blue-50 border border-blue-200 rounded-lg p-6 my-8">
-  <h3 class="text-lg font-semibold text-blue-900 mb-3">🚀 Token Efficiency Comparison</h3>
-  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-    <div>
-      <strong>JSON Schema:</strong> ~680 tokens
+<div class="card-once my-8">
+  <h3 class="text-lg font-semibold text-once-black mb-3">Token Efficiency Comparison</h3>
+  <div class="space-y-2">
+    <div class="flex justify-between items-center">
+      <span>**JSON Schema:**</span> 
+      <span class="font-mono">~680 tokens</span>
     </div>
-    <div>
-      <strong>BAML:</strong> ~320 tokens <span class="text-blue-600 font-semibold">(53% reduction)</span>
+    <div class="flex justify-between items-center">
+      <span>**BAML:**</span>
+      <span class="font-mono">~320 tokens <span class="text-once-gray-600 font-semibold">(53% reduction)</span></span>
     </div>
   </div>
-  <p class="text-blue-800 mt-3">
+  <p class="text-once-gray-600 mt-4 text-sm">
     Real-world comparison from production agentic workflows using complex nested types, enums, and arrays.
   </p>
 </div>
@@ -73,39 +100,39 @@ class User {
 ## Key Features
 
 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 my-8">
-  <div class="bg-white p-6 rounded-lg border border-gray-200">
-    <h3 class="font-semibold text-gray-900 mb-2">🎯 Ruby-Idiomatic API</h3>
-    <p class="text-gray-600">Every T::Struct and T::Enum gets a natural <code>.to_baml</code> method that feels native to Ruby.</p>
+  <div class="card-once">
+    <h3 class="font-semibold text-once-black mb-2">Ruby-Idiomatic API</h3>
+    <p class="text-once-gray-600">Every T::Struct and T::Enum gets a natural `.to_baml` method that feels native to Ruby.</p>
   </div>
   
-  <div class="bg-white p-6 rounded-lg border border-gray-200">
-    <h3 class="font-semibold text-gray-900 mb-2">🧠 Smart Defaults</h3>
-    <p class="text-gray-600">Field descriptions and dependencies included automatically for better LLM understanding.</p>
+  <div class="card-once">
+    <h3 class="font-semibold text-once-black mb-2">Smart Defaults</h3>
+    <p class="text-once-gray-600">Field descriptions and dependencies included automatically for better LLM understanding.</p>
   </div>
   
-  <div class="bg-white p-6 rounded-lg border border-gray-200">
-    <h3 class="font-semibold text-gray-900 mb-2">📝 Field Descriptions</h3>
-    <p class="text-gray-600">Extracts comments from source code to provide crucial context for autonomous agents.</p>
+  <div class="card-once">
+    <h3 class="font-semibold text-once-black mb-2">Field Descriptions</h3>
+    <p class="text-once-gray-600">Extracts comments from source code to provide crucial context for autonomous agents.</p>
   </div>
   
-  <div class="bg-white p-6 rounded-lg border border-gray-200">
-    <h3 class="font-semibold text-gray-900 mb-2">🔗 Dependency Management</h3>
-    <p class="text-gray-600">Automatically includes all referenced types with proper topological sorting.</p>
+  <div class="card-once">
+    <h3 class="font-semibold text-once-black mb-2">Dependency Management</h3>
+    <p class="text-once-gray-600">Automatically includes all referenced types with proper topological sorting.</p>
   </div>
   
-  <div class="bg-white p-6 rounded-lg border border-gray-200">
-    <h3 class="font-semibold text-gray-900 mb-2">✅ Type-Safe</h3>
-    <p class="text-gray-600">Full Sorbet type checking throughout the gem with 100% test coverage.</p>
+  <div class="card-once">
+    <h3 class="font-semibold text-once-black mb-2">Type-Safe</h3>
+    <p class="text-once-gray-600">Full Sorbet type checking throughout the gem with 100% test coverage.</p>
   </div>
   
-  <div class="bg-white p-6 rounded-lg border border-gray-200">
-    <h3 class="font-semibold text-gray-900 mb-2">🛠️ Tool Definitions</h3>
-    <p class="text-gray-600">Generate BAML tool specifications for function calling and agentic workflows.</p>
+  <div class="card-once">
+    <h3 class="font-semibold text-once-black mb-2">Tool Definitions</h3>
+    <p class="text-once-gray-600">Generate BAML tool specifications for function calling and agentic workflows.</p>
   </div>
   
-  <div class="bg-white p-6 rounded-lg border border-gray-200">
-    <h3 class="font-semibold text-gray-900 mb-2">🏁 Production Ready</h3>
-    <p class="text-gray-600">Complete type support, dependency management, and comprehensive test coverage.</p>
+  <div class="card-once">
+    <h3 class="font-semibold text-once-black mb-2">Production Ready</h3>
+    <p class="text-once-gray-600">Complete type support, dependency management, and comprehensive test coverage.</p>
   </div>
 </div>
 
@@ -175,9 +202,9 @@ gem install sorbet-baml
 
 ---
 
-<div class="text-center mt-12">
-  <h2 class="text-2xl font-bold text-gray-900 mb-4">Ready to get started?</h2>
-  <a href="/sorbet-baml/getting-started/" class="bg-blue-600 text-white px-8 py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors inline-block">
+<div class="text-center mt-16">
+  <h2 class="text-2xl font-bold text-once-black mb-4">Ready to get started?</h2>
+  <a href="/getting-started/" class="btn-primary">
     Read the Getting Started Guide →
   </a>
 </div>
