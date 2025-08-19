@@ -4,21 +4,23 @@ title: "sorbet-baml"
 description: "Ruby-idiomatic conversion from Sorbet types to BAML for efficient LLM prompting. 60% fewer tokens than JSON Schema while maintaining complete type information."
 ---
 
-<div class="prose prose-lg max-w-none">
+<div class="prose prose-lg max-w-none" markdown="1">
 
-<p>Something happened to schema generation.</p>
+Something happened to schema generation.
 
-<p>You used to define your types **once**, convert them, and use them efficiently. Whether for validation, documentation, or LLM prompting, it felt straightforward. And it was.</p>
+You used to define your types **once**, convert them, and use them efficiently. Whether for validation, documentation, or LLM prompting, it felt straightforward. And it was.
 
-<p>Today, most type conversion is verbose and inefficient. JSON Schema bloats your prompts with unnecessary metadata. Every field needs explicit definitions. Token counts skyrocket, and your LLM interactions become expensive.</p>
+Today, most type conversion is verbose and inefficient. JSON Schema bloats your prompts with unnecessary metadata. Every field needs explicit definitions. Token counts skyrocket, and your LLM interactions become expensive.
 
-<p>Add up your API costs from verbose schemas last month. You should own more efficient tooling by now.</p>
+Add up your API costs from verbose schemas last month. You should own more efficient tooling by now.
 
-<p>JSON Schema still makes sense for many use cases, but BAML's grip will tighten. Type conversion used to be hopelessly verbose, but modern markup is simpler now and vastly improved. Plus, developers are hungry to optimize their LLM costs again, tired of being subservient to token-heavy schemas.</p>
+JSON Schema still makes sense for many use cases, but BAML's grip will tighten. Type conversion used to be hopelessly verbose, but modern markup is simpler now and vastly improved. Plus, developers are hungry to optimize their LLM costs again, tired of being subservient to token-heavy schemas.
 
-<p>**Once** upon a time you defined your types efficiently, you controlled your token usage, and your prompting performance was your own business. We think it's that time again.</p>
+**Once** upon a time you defined your types efficiently, you controlled your token usage, and your prompting performance was your own business. We think it's that time again.
 
-<p>Introducing **sorbet-baml**, Ruby-idiomatic BAML generation from [Sorbet](https://sorbet.org) types.</p>
+Introducing **sorbet-baml**, Ruby-idiomatic BAML generation from [Sorbet](https://sorbet.org) types.
+
+</div>
 
 <ul class="list-dash my-8">
   <li>Define once, convert efficiently.</li>
@@ -28,7 +30,7 @@ description: "Ruby-idiomatic conversion from Sorbet types to BAML for efficient 
   <li>For better LLM performance.</li>
 </ul>
 
-<p>So far there's one **sorbet-baml** gem:</p>
+So far there's one **sorbet-baml** gem:
 
 <ul class="list-dash my-8">
   <li>**sorbet-baml:** Ruby-idiomatic conversion from Sorbet types to BAML.</li>
@@ -50,25 +52,23 @@ description: "Ruby-idiomatic conversion from Sorbet types to BAML for efficient 
   <img src="https://img.shields.io/badge/Sorbet-compatible-blue" alt="Sorbet Compatible" />
 </div>
 
-</div>
-
 ## Why BAML?
 
-BAML uses approximately **60% fewer tokens** than JSON Schema while maintaining complete type information, making your LLM interactions more efficient and cost-effective.
+BAML uses approximately <strong>60% fewer tokens</strong> than JSON Schema while maintaining complete type information, making your LLM interactions more efficient and cost-effective.
 
 <div class="card-once my-8">
-  <h3 class="text-lg font-semibold text-once-black mb-3">Token Efficiency Comparison</h3>
+  <h3 class="text-lg font-semibold text-once-blue-900 mb-3 font-sans">Token Efficiency Comparison</h3>
   <div class="space-y-2">
     <div class="flex justify-between items-center">
-      <span>**JSON Schema:**</span> 
+      <span><strong>JSON Schema:</strong></span> 
       <span class="font-mono">~680 tokens</span>
     </div>
     <div class="flex justify-between items-center">
-      <span>**BAML:**</span>
-      <span class="font-mono">~320 tokens <span class="text-once-gray-600 font-semibold">(53% reduction)</span></span>
+      <span><strong>BAML:</strong></span>
+      <span class="font-mono">~320 tokens <span class="text-once-blue-700 font-semibold">(53% reduction)</span></span>
     </div>
   </div>
-  <p class="text-once-gray-600 mt-4 text-sm">
+  <p class="text-once-blue-700 mt-4 text-sm">
     Real-world comparison from production agentic workflows using complex nested types, enums, and arrays.
   </p>
 </div>
@@ -88,7 +88,7 @@ require 'sorbet-baml'
 User.to_baml
 ```
 
-**Generated BAML:**
+<strong>Generated BAML:</strong>
 ```baml
 class User {
   name string
@@ -138,25 +138,93 @@ class User {
 
 ## Complete Type Support
 
-### Basic Types
-- `String` → `string`
-- `Integer` → `int` 
-- `Float` → `float`
-- `T::Boolean` → `bool`
-- `Symbol` → `string`
-- `Date/DateTime/Time` → `string`
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8 my-8">
+  <div class="space-y-4">
+    <h3 class="font-semibold text-once-blue-900 text-lg font-sans">Basic Types</h3>
+    <div class="space-y-2 text-sm font-mono">
+      <div class="flex justify-between items-center">
+        <code class="text-once-blue-700">String</code>
+        <span class="text-once-gray-500">→</span>
+        <code class="text-once-blue-600">string</code>
+      </div>
+      <div class="flex justify-between items-center">
+        <code class="text-once-blue-700">Integer</code>
+        <span class="text-once-gray-500">→</span>
+        <code class="text-once-blue-600">int</code>
+      </div>
+      <div class="flex justify-between items-center">
+        <code class="text-once-blue-700">Float</code>
+        <span class="text-once-gray-500">→</span>
+        <code class="text-once-blue-600">float</code>
+      </div>
+      <div class="flex justify-between items-center">
+        <code class="text-once-blue-700">T::Boolean</code>
+        <span class="text-once-gray-500">→</span>
+        <code class="text-once-blue-600">bool</code>
+      </div>
+      <div class="flex justify-between items-center">
+        <code class="text-once-blue-700">Symbol</code>
+        <span class="text-once-gray-500">→</span>
+        <code class="text-once-blue-600">string</code>
+      </div>
+      <div class="flex justify-between items-center">
+        <code class="text-once-blue-700 text-xs">Date/DateTime/Time</code>
+        <span class="text-once-gray-500">→</span>
+        <code class="text-once-blue-600">string</code>
+      </div>
+    </div>
+  </div>
 
-### Complex Types
-- `T.nilable(T)` → `T?` (optional types)
-- `T::Array[T]` → `T[]` (arrays)
-- `T::Hash[K,V]` → `map<K,V>` (hash maps)
-- `T.any(T1, T2)` → `T1 | T2` (union types)
+  <div class="space-y-4">
+    <h3 class="font-semibold text-once-blue-900 text-lg font-sans">Complex Types</h3>
+    <div class="space-y-2 text-sm font-mono">
+      <div class="flex justify-between items-center">
+        <code class="text-once-blue-700 text-xs">T.nilable(T)</code>
+        <span class="text-once-gray-500">→</span>
+        <code class="text-once-blue-600">T?</code>
+      </div>
+      <div class="flex justify-between items-center">
+        <code class="text-once-blue-700">T::Array[T]</code>
+        <span class="text-once-gray-500">→</span>
+        <code class="text-once-blue-600">T[]</code>
+      </div>
+      <div class="flex justify-between items-center">
+        <code class="text-once-blue-700 text-xs">T::Hash[K,V]</code>
+        <span class="text-once-gray-500">→</span>
+        <code class="text-once-blue-600 text-xs">map&lt;K,V&gt;</code>
+      </div>
+      <div class="flex justify-between items-center">
+        <code class="text-once-blue-700 text-xs">T.any(T1, T2)</code>
+        <span class="text-once-gray-500">→</span>
+        <code class="text-once-blue-600">T1 | T2</code>
+      </div>
+    </div>
+    <p class="text-xs text-once-gray-600">Optional types, arrays, maps, unions</p>
+  </div>
 
-### Structured Types
-- `T::Struct` → `class Name { ... }` (classes with fields)
-- `T::Enum` → `enum Name { "value1" "value2" }` (enums)
-- Nested structs with proper reference handling
-- **Automatic dependency resolution** with topological sorting
+  <div class="space-y-4">
+    <h3 class="font-semibold text-once-blue-900 text-lg font-sans">Structured Types</h3>
+    <div class="space-y-2 text-sm font-mono">
+      <div class="space-y-1">
+        <div class="flex justify-between items-center">
+          <code class="text-once-blue-700">T::Struct</code>
+          <span class="text-once-gray-500">→</span>
+          <code class="text-once-blue-600 text-xs">class Name { ... }</code>
+        </div>
+        <div class="flex justify-between items-center">
+          <code class="text-once-blue-700">T::Enum</code>
+          <span class="text-once-gray-500">→</span>
+          <code class="text-once-blue-600 text-xs">enum Name { ... }</code>
+        </div>
+      </div>
+    </div>
+    <div class="space-y-1 text-xs text-once-blue-700">
+      <p>• Nested structs with proper references</p>
+      <p>• <strong>Automatic dependency resolution</strong></p>
+      <p>• Topological sorting</p>
+    </div>
+  </div>
+</div>
 
 ## Perfect for Agentic Workflows
 

@@ -3,17 +3,17 @@
   <head>
     {% render "head", title: title, description: description %}
   </head>
-  <body class="bg-white min-h-screen font-system">
+  <body class="bg-white min-h-screen font-serif">
     {% render "nav" %}
     
     <main class="min-h-screen">
-      <div class="max-w-prose mx-auto px-6 py-16 sm:py-24">
+      <div class="max-w-prose-wide mx-auto px-6 py-16 sm:py-24">
         {{ content }}
       </div>
     </main>
     
-    <footer class="bg-once-gray-50 border-t border-once-gray-200">
-      <div class="max-w-prose mx-auto px-6 py-8">
+    <footer class="bg-once-blue-50 border-t border-once-blue-200">
+      <div class="max-w-prose-wide mx-auto px-6 py-8">
         <div class="signature">
           <dl>
             <dt>Vicente Reig</dt>
