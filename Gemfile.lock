@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    sorbet-baml (0.3.0)
+    sorbet-baml (0.4.0)
       sorbet-runtime (~> 0.5)
 
 GEM
