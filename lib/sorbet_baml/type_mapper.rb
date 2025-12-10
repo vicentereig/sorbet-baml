@@ -19,6 +19,9 @@ module SorbetBaml
         map_array_type(type_object)
       when T::Types::TypedHash
         map_hash_type(type_object)
+      when T::Types::Untyped
+        # T.untyped maps to BAML's json type for dynamic values
+        'json'
       else
         # Check if it's a union type (T.nilable or T.any)
         if type_object.respond_to?(:types)
@@ -61,8 +64,10 @@ module SorbetBaml
     sig { params(type_object: T.untyped).returns(String) }
     def self.map_union_type(type_object)
       types = type_object.types
-      nil_type = types.find { |t| t.raw_type == NilClass }
-      non_nil_types = types.reject { |t| t.raw_type == NilClass }
+
+      # Only T::Types::Simple has raw_type - check type class before accessing
+      nil_type = types.find { |t| nil_type?(t) }
+      non_nil_types = types.reject { |t| nil_type?(t) }
 
       return 'null' if non_nil_types.empty?
 
@@ -89,6 +94,13 @@ module SorbetBaml
       else
         union_string
       end
+    end
+
+    # Check if a type represents NilClass safely
+    # Only T::Types::Simple has raw_type; other type classes (TypedHash, TypedArray, Untyped) do not
+    sig { params(type_obj: T.untyped).returns(T::Boolean) }
+    def self.nil_type?(type_obj)
+      type_obj.is_a?(T::Types::Simple) && type_obj.raw_type == NilClass
     end
 
     sig { params(type_object: T.untyped).returns(String) }
