@@ -100,7 +100,7 @@ module SorbetBaml
     # Only T::Types::Simple has raw_type; other type classes (TypedHash, TypedArray, Untyped) do not
     sig { params(type_obj: T.untyped).returns(T::Boolean) }
     def self.nil_type?(type_obj)
-      type_obj.is_a?(T::Types::Simple) && type_obj.raw_type == NilClass
+      type_obj.is_a?(T::Types::Simple) && type_obj.raw_type == NilClass || false
     end
 
     sig { params(type_object: T.untyped).returns(String) }
