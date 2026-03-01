@@ -26,8 +26,8 @@ module SorbetBaml
       tool_name = klass.tool_name_value || klass.name&.split('::')&.last
       tool_description = klass.tool_description_value
 
-      # Get parameters from DSPy's call_schema which extracts from Sorbet signatures
-      call_schema = klass.call_schema
+      # Get parameters from DSPy's call_schema_object which extracts from Sorbet signatures.
+      call_schema = klass.call_schema_object
       parameters = call_schema[:properties] || {}
       required_params = call_schema[:required] || []
 
@@ -66,6 +66,10 @@ module SorbetBaml
     sig { params(json_schema_info: T::Hash[Symbol, T.untyped]).returns(String) }
     def json_schema_type_to_baml(json_schema_info)
       type = json_schema_info[:type]
+
+      # dspy >= 0.34 represents nilable types as ["integer", "null"] rather than just "integer".
+      # Extract the primary (non-null) type so the case below matches correctly.
+      type = type.reject { |t| t == 'null' }.first if type.is_a?(Array)
 
       case type
       when :string, 'string'
