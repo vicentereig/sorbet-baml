@@ -16,12 +16,21 @@ module SorbetBaml
       return descriptions unless klass.respond_to?(:props)
 
       begin
-        T.unsafe(klass).props.each do |field_name, prop_info|
-          next unless prop_info.is_a?(Hash)
+        # DSPy >= 0.34 stores descriptions via DSPy::Ext::StructDescriptions#field_descriptions
+        if klass.respond_to?(:field_descriptions)
+          T.unsafe(klass).field_descriptions.each do |field_name, desc|
+            descriptions[field_name.to_s] = desc if desc.is_a?(String)
+          end
+        end
 
-          # Check if the prop has a description in the :extra field
-          extra = prop_info[:extra]
-          descriptions[field_name.to_s] = extra[:description] if extra.is_a?(Hash) && extra[:description].is_a?(String)
+        # Fall back to the legacy :extra hash for structs that store descriptions there
+        if descriptions.empty?
+          T.unsafe(klass).props.each do |field_name, prop_info|
+            next unless prop_info.is_a?(Hash)
+
+            extra = prop_info[:extra]
+            descriptions[field_name.to_s] = extra[:description] if extra.is_a?(Hash) && extra[:description].is_a?(String)
+          end
         end
       rescue StandardError
         # Handle any errors gracefully and return empty hash
