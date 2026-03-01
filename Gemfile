@@ -6,8 +6,10 @@ source 'https://rubygems.org'
 gemspec
 
 # Development dependencies
+gem 'base64'     # required by dspy 0.34.3 (dspy/image.rb) on Ruby 3.4+
+gem 'bigdecimal' # required by sorbet-toon (dspy 0.34.3 dependency) on Ruby 3.4+
 gem 'byebug', '~> 11.1'
-gem 'dspy', '~> 0.1', '>= 0.1.0'
+gem 'dspy', '~> 0.34.3'
 gem 'irb'
 gem 'rake', '~> 13.0'
 gem 'rspec', '~> 3.13'
