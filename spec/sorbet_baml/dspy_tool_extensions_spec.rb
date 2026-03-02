@@ -39,6 +39,28 @@ if defined?(DSPy::Tools::Base)
       end
     end
 
+    describe 'enum parameter support' do
+      it 'generates enum definition and uses enum type for array of enums' do
+        baml = SorbetBaml::TestFixtures::EnumSearchTool.to_baml
+
+        expect(baml).to include('enum SearchCategory {')
+        expect(baml).to include('"web"')
+        expect(baml).to include('"images"')
+        expect(baml).to include('"news"')
+        expect(baml).to include('"videos"')
+        expect(baml).to include('categories SearchCategory[]')
+        expect(baml).to include('class enum_search {')
+      end
+
+      it 'generates enum definition and uses enum type for single enum parameter' do
+        baml = SorbetBaml::TestFixtures::SingleEnumTool.to_baml
+
+        expect(baml).to include('enum SearchCategory {')
+        expect(baml).to include('category SearchCategory')
+        expect(baml).to include('class single_enum {')
+      end
+    end
+
     describe 'baml_tool_definition' do
       it 'is an alias for to_baml' do
         tool_def = SorbetBaml::TestFixtures::CalculatorTool.baml_tool_definition

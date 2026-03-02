@@ -31,7 +31,22 @@ module SorbetBaml
       parameters = call_schema[:properties] || {}
       required_params = call_schema[:required] || []
 
+      # Extract Sorbet types directly from the call method signature for richer type info.
+      # This gives us access to T::Enum classes, T::Struct references, etc. that are lost
+      # when converting to JSON schema.
+      sorbet_types = extract_sorbet_types(klass)
+
+      # Collect enum classes referenced by parameters for generating enum definitions.
+      enum_classes = collect_enum_classes(sorbet_types)
+
       lines = []
+
+      # Generate enum definitions before the class
+      enum_converter = Converter.new(@options)
+      enum_classes.each do |enum_klass|
+        lines << enum_converter.convert_enum(enum_klass)
+        lines << ''
+      end
 
       # Add tool description as class-level comment if available
       lines << "// #{tool_description}" if @include_descriptions && tool_description
@@ -40,8 +55,13 @@ module SorbetBaml
       lines << "class #{tool_name} {"
 
       parameters.each do |param_name, param_info|
-        # Convert JSON schema type to BAML type
-        baml_type = json_schema_type_to_baml(param_info)
+        # Use Sorbet type mapping when available (preserves enum/struct type names).
+        # Fall back to JSON schema conversion for tools without Sorbet signatures.
+        baml_type = if sorbet_types.key?(param_name)
+                      TypeMapper.map_type(sorbet_types[param_name])
+                    else
+                      json_schema_type_to_baml(param_info)
+                    end
 
         # Add optional marker if parameter is not required
         baml_type += '?' unless required_params.include?(param_name.to_s)
@@ -63,6 +83,53 @@ module SorbetBaml
 
     private
 
+    # Extract Sorbet types from the tool's call method signature.
+    sig { params(klass: T.untyped).returns(T::Hash[Symbol, T.untyped]) }
+    def extract_sorbet_types(klass)
+      method_obj = klass.instance_method(:call)
+      sig_info = T::Utils.signature_for_method(method_obj)
+      return {} if sig_info.nil?
+
+      types = {}
+      sig_info.arg_types.each { |name, type| types[name] = type }
+      sig_info.kwarg_types.each { |name, type| types[name] = type }
+      types
+    end
+
+    # Collect all T::Enum classes referenced by the given Sorbet types.
+    sig { params(sorbet_types: T::Hash[Symbol, T.untyped]).returns(T::Array[T.class_of(T::Enum)]) }
+    def collect_enum_classes(sorbet_types)
+      enum_classes = T.let([], T::Array[T.class_of(T::Enum)])
+      sorbet_types.each_value do |type|
+        enum_classes.concat(extract_enum_types(type))
+      end
+      enum_classes.uniq
+    end
+
+    # Recursively extract T::Enum classes from a Sorbet type object.
+    sig { params(type: T.untyped).returns(T::Array[T.class_of(T::Enum)]) }
+    def extract_enum_types(type)
+      case type
+      when T::Types::Simple
+        raw = type.raw_type
+        raw.is_a?(Class) && raw < T::Enum ? [T.cast(raw, T.class_of(T::Enum))] : []
+      when T::Types::TypedArray
+        extract_enum_types(type.type)
+      when T::Types::TypedHash
+        extract_enum_types(type.keys) + extract_enum_types(type.values)
+      else
+        if type.is_a?(Class) && type < T::Enum
+          [T.cast(type, T.class_of(T::Enum))]
+        elsif type.respond_to?(:types)
+          type.types.flat_map { |t| extract_enum_types(t) }
+        else
+          []
+        end
+      end
+    end
+
+    # Fallback: convert JSON schema type info to BAML type string.
+    # Used when Sorbet signature is not available.
     sig { params(json_schema_info: T::Hash[Symbol, T.untyped]).returns(String) }
     def json_schema_type_to_baml(json_schema_info)
       type = json_schema_info[:type]

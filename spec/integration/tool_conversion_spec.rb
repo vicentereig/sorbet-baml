@@ -60,6 +60,26 @@ RSpec.describe 'Tool Conversion Integration' do
         expect(baml).to include('query string')
         expect(baml).to include('limit int?')
       end
+
+      it 'converts DSPy tools with enum array parameters' do
+        baml = SorbetBaml.from_dspy_tool(SorbetBaml::TestFixtures::EnumSearchTool)
+
+        expect(baml).to include('enum SearchCategory {')
+        expect(baml).to include('"web"')
+        expect(baml).to include('"images"')
+        expect(baml).to include('"news"')
+        expect(baml).to include('"videos"')
+        expect(baml).to include('class enum_search {')
+        expect(baml).to include('query string')
+        expect(baml).to include('categories SearchCategory[]')
+      end
+
+      it 'converts DSPy tools with single enum parameters' do
+        baml = SorbetBaml.from_dspy_tool(SorbetBaml::TestFixtures::SingleEnumTool)
+
+        expect(baml).to include('enum SearchCategory {')
+        expect(baml).to include('category SearchCategory')
+      end
     end
   end
 
