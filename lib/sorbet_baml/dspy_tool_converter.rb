@@ -41,15 +41,19 @@ module SorbetBaml
 
       lines = []
 
-      # Generate enum definitions before the class
-      enum_converter = Converter.new(@options)
-      enum_classes.each do |enum_klass|
-        lines << enum_converter.convert_enum(enum_klass)
-        lines << ''
-      end
-
       # Add tool description as class-level comment if available
       lines << "// #{tool_description}" if @include_descriptions && tool_description
+
+      # Generate enum definitions between description and class
+      if enum_classes.any?
+        lines << '' unless lines.empty?
+        enum_converter = Converter.new(@options)
+        enum_classes.each_with_index do |enum_klass, i|
+          lines << '' unless i.zero?
+          lines << enum_converter.convert_enum(enum_klass)
+        end
+        lines << ''
+      end
 
       # Generate BAML class definition
       lines << "class #{tool_name} {"
@@ -112,14 +116,14 @@ module SorbetBaml
       case type
       when T::Types::Simple
         raw = type.raw_type
-        raw.is_a?(Class) && raw < T::Enum ? [T.cast(raw, T.class_of(T::Enum))] : []
+        raw.is_a?(Class) && raw < T::Enum ? [raw] : []
       when T::Types::TypedArray
         extract_enum_types(type.type)
       when T::Types::TypedHash
         extract_enum_types(type.keys) + extract_enum_types(type.values)
       else
         if type.is_a?(Class) && type < T::Enum
-          [T.cast(type, T.class_of(T::Enum))]
+          [type]
         elsif type.respond_to?(:types)
           type.types.flat_map { |t| extract_enum_types(t) }
         else
