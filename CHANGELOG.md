@@ -1,5 +1,16 @@
 ## [Unreleased]
 
+## [0.5.1] - 2026-03-07
+
+### Fixed
+
+- Avoid emitting invalid double optional markers like `int??` when converting DSPy tool parameters backed by `T.nilable(...)`
+- Add regression coverage for nilable scalar, enum, and enum-array DSPy tool parameters so malformed `??` output fails tests
+
+### Improved
+
+- Tighten DSPy tool conversion assertions to validate full rendered optional parameter lines instead of permissive substrings
+
 ## [0.4.0] - 2025-10-14
 
 ### Changed
