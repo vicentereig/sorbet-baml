@@ -58,7 +58,8 @@ RSpec.describe 'Tool Conversion Integration' do
         baml = SorbetBaml::TestFixtures::DSPySearchTool.to_baml
 
         expect(baml).to include('query string')
-        expect(baml).to include('limit int?')
+        expect(baml).to include('limit int? @description("Parameter limit (optional)")')
+        expect(baml).not_to include('??')
       end
 
       it 'converts DSPy tools with enum array parameters' do
@@ -79,6 +80,14 @@ RSpec.describe 'Tool Conversion Integration' do
 
         expect(baml).to include('enum SearchCategory {')
         expect(baml).to include('category SearchCategory')
+      end
+
+      it 'does not double-mark nilable enum parameters as optional' do
+        baml = SorbetBaml.from_dspy_tool(SorbetBaml::TestFixtures::OptionalEnumTool)
+
+        expect(baml).to include('category SearchCategory? @description("Parameter category (optional)")')
+        expect(baml).to include('categories SearchCategory[]? @description("Parameter categories (optional)")')
+        expect(baml).not_to include('??')
       end
     end
   end

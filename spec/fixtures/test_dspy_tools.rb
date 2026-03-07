@@ -80,6 +80,19 @@ begin
           "Category: #{category.serialize}"
         end
       end
+
+      # Tool with nilable enum parameters
+      class OptionalEnumTool < DSPy::Tools::Base
+        extend T::Sig
+
+        tool_name 'optional_enum'
+        tool_description 'Tool with optional enum parameters'
+
+        sig { params(category: T.nilable(SearchCategory), categories: T.nilable(T::Array[SearchCategory])).returns(String) }
+        def call(category: nil, categories: nil)
+          [category&.serialize, categories&.map(&:serialize)&.join(', ')].compact.join(' / ')
+        end
+      end
     end
   end
 rescue LoadError

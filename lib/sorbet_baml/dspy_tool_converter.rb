@@ -67,8 +67,9 @@ module SorbetBaml
                       json_schema_type_to_baml(param_info)
                     end
 
-        # Add optional marker if parameter is not required
-        baml_type += '?' unless required_params.include?(param_name.to_s)
+        # TypeMapper already encodes T.nilable(...) as a trailing `?`.
+        # Avoid emitting invalid `??` when DSPy also marks the kwarg optional.
+        baml_type += '?' if !required_params.include?(param_name.to_s) && !baml_type.end_with?('?')
 
         line = "#{' ' * @indent_size}#{param_name} #{baml_type}"
 
